@@ -1,23 +1,18 @@
-import {
-  Award,
-  CheckCircle2,
-  ClipboardCheck,
-  Play,
-  RotateCcw,
-  Trophy,
-  Volume2,
-  XCircle,
-} from 'lucide-react';
+import { CheckCircle2, Volume2, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import {
-  Badge,
   Button,
   Card,
+  Disclosure,
   Input,
   PageHeader,
   ProgressBar,
 } from '../../components/ui';
-import { PHRASE_CATEGORIES, type PhraseCategory } from '../../data/phrases';
+import {
+  PHRASES,
+  PHRASE_CATEGORIES,
+  type PhraseCategory,
+} from '../../data/phrases';
 import { cn } from '../../utils/cn';
 import { speakSwahili } from '../../utils/speech';
 import {
@@ -66,6 +61,15 @@ function getScoreFeedback(percentage: number): { title: string; message: string 
   };
 }
 
+function chipClass(active: boolean): string {
+  return cn(
+    'rounded-full border px-4 py-2 text-xs font-medium transition-colors',
+    active
+      ? 'border-savanna-green bg-savanna-green text-cream'
+      : 'border-warm-border/70 bg-surface text-charcoal-muted hover:text-charcoal',
+  );
+}
+
 export function QuizzesPage() {
   const [stage, setStage] = useState<QuizStage>('setup');
   const [category, setCategory] = useState<'All' | PhraseCategory>('All');
@@ -81,6 +85,7 @@ export function QuizzesPage() {
     getQuizHighScores(),
   );
   const [isNewBest, setIsNewBest] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const activeQuestion = questions[currentIdx];
 
@@ -146,216 +151,140 @@ export function QuizzesPage() {
 
   const correctCount = answers.filter((a) => a.isCorrect).length;
 
+  // A single category can hold fewer phrases than the requested count
+  const availableCount = Math.min(
+    questionCount,
+    PHRASES.filter((p) => category === 'All' || p.category === category).length,
+  );
+
   return (
-    <div className="space-y-10">
-      <PageHeader
-        tone="ochre"
-        icon={<ClipboardCheck className="size-5" aria-hidden="true" />}
-        eyebrow="Majaribio"
-        title="Culinary Swahili Quizzes"
-        description="Test your culinary vocabulary with multiple-choice and typed translation challenges."
-        action={
-          // The setup stage already shows records in its own panel
-          stage !== 'setup' && (
-            <Badge tone="ochre">
-              Best: {highScores.bestPercentage}% ({highScores.bestScore} pts)
-            </Badge>
-          )
-        }
-      />
+    <div className="mx-auto max-w-xl space-y-10">
+      {stage === 'active' ? (
+        <h1 className="sr-only">Quiz in progress</h1>
+      ) : (
+        <PageHeader eyebrow="Majaribio" title="Quizzes" quiet />
+      )}
 
       {/* Setup Stage */}
       {stage === 'setup' && (
-        <div className="grid gap-8 lg:grid-cols-3">
-          <Card className="space-y-10 sm:p-10 lg:col-span-2">
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold leading-snug text-charcoal">
-                1. Choose Category
-              </h2>
-              <div className="flex flex-wrap gap-2">
-                {(['All', ...PHRASE_CATEGORIES] as const).map((cat) => {
-                  const active = category === cat;
-                  return (
-                    <button
-                      key={cat}
-                      type="button"
-                      onClick={() => setCategory(cat)}
-                      aria-pressed={active}
-                      className={cn(
-                        'rounded-full border px-4 py-2 text-xs font-medium transition-colors',
-                        active
-                          ? 'border-savanna-green bg-savanna-green text-cream'
-                          : 'border-warm-border/70 bg-surface text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
-                      )}
-                    >
-                      {cat}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+        <div className="space-y-6">
+          <Card className="py-16 text-center sm:py-20">
+            <h2 className="text-3xl font-semibold leading-snug text-charcoal">
+              {availableCount} questions
+            </h2>
+            <p className="mt-3 text-sm text-charcoal-muted">
+              {category === 'All' ? 'All categories' : category} · {MODE_LABELS[mode]}
+            </p>
+            <Button variant="primary" size="lg" className="mt-10" onClick={startQuiz}>
+              Start Quiz
+            </Button>
+          </Card>
 
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold leading-snug text-charcoal">
-                2. Question Format
-              </h2>
-              <div className="grid gap-3 sm:grid-cols-3">
-                {(['mixed', 'multiple-choice', 'type-translation'] as const).map(
-                  (itemMode) => {
-                    const active = mode === itemMode;
+          <Disclosure label="Change settings" defaultOpen={settingsOpen}>
+            <div className="space-y-10 text-center">
+              <div className="space-y-4">
+                <h2 className="text-base font-semibold text-charcoal">Category</h2>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {(['All', ...PHRASE_CATEGORIES] as const).map((cat) => {
+                    const active = category === cat;
                     return (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setCategory(cat)}
+                        aria-pressed={active}
+                        className={chipClass(active)}
+                      >
+                        {cat}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h2 className="text-base font-semibold text-charcoal">Question format</h2>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {(['mixed', 'multiple-choice', 'type-translation'] as const).map(
+                    (itemMode) => (
                       <button
                         key={itemMode}
                         type="button"
                         onClick={() => setMode(itemMode)}
-                        aria-pressed={active}
-                        className={cn(
-                          'rounded-2xl border p-4 text-left text-xs font-medium leading-relaxed transition-colors',
-                          active
-                            ? 'border-terracotta bg-terracotta-soft text-terracotta-hover'
-                            : 'border-warm-border/70 bg-cream/50 text-charcoal-muted hover:bg-cream-dark',
-                        )}
+                        aria-pressed={mode === itemMode}
+                        className={chipClass(mode === itemMode)}
                       >
                         {MODE_LABELS[itemMode]}
                       </button>
-                    );
-                  },
-                )}
+                    ),
+                  )}
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold leading-snug text-charcoal">
-                3. Number of Questions
-              </h2>
-              <div className="flex flex-wrap gap-3">
-                {[5, 10].map((count) => {
-                  const active = questionCount === count;
-                  return (
+              <div className="space-y-4">
+                <h2 className="text-base font-semibold text-charcoal">Length</h2>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {[5, 10].map((count) => (
                     <button
                       key={count}
                       type="button"
                       onClick={() => setQuestionCount(count)}
-                      aria-pressed={active}
-                      className={cn(
-                        'rounded-xl border px-5 py-3 text-xs font-medium transition-colors',
-                        active
-                          ? 'border-savanna-green bg-savanna-green-soft text-savanna-green'
-                          : 'border-warm-border/70 bg-surface text-charcoal-muted hover:bg-cream-dark',
-                      )}
+                      aria-pressed={questionCount === count}
+                      className={chipClass(questionCount === count)}
                     >
                       {count} Questions
                     </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={startQuiz}
-                leftIcon={<Play className="size-4" aria-hidden="true" />}
-              >
-                Start Quiz
-              </Button>
-            </div>
-          </Card>
-
-          {/* High Score Summary */}
-          <Card className="flex flex-col gap-8 bg-cream-dark/40 shadow-none sm:p-6 lg:self-start">
-            <div className="space-y-6">
-              <div className="flex items-center gap-2.5 text-savanna-green">
-                <Trophy className="size-5" aria-hidden="true" />
-                <h2 className="text-xl font-semibold leading-snug text-charcoal">Your Records</h2>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-2xl bg-surface p-3.5">
-                  <p className="text-xs text-charcoal-muted">Best Accuracy</p>
-                  <p className="mt-1 text-xl font-bold text-savanna-green">
-                    {highScores.bestPercentage}%
-                  </p>
-                </div>
-                <div className="rounded-2xl bg-surface p-3.5">
-                  <p className="text-xs text-charcoal-muted">Best Score</p>
-                  <p className="mt-1 text-xl font-bold text-terracotta">
-                    {highScores.bestScore}
-                  </p>
+                  ))}
                 </div>
               </div>
-
-              <div className="space-y-2 text-sm text-charcoal-muted">
-                <p>
-                  Quizzes completed:{' '}
-                  <strong className="text-charcoal">
-                    {highScores.quizzesCompleted}
-                  </strong>
-                </p>
-                {highScores.lastScore !== null && highScores.lastTotal !== null && (
-                  <p>
-                    Last attempt:{' '}
-                    <strong className="text-charcoal">
-                      {highScores.lastScore} / {highScores.lastTotal}
-                    </strong>
-                  </p>
-                )}
-              </div>
             </div>
+          </Disclosure>
 
-            <p className="text-xs leading-relaxed text-charcoal-muted">
-              High scores are saved automatically in your browser’s local storage.
+          {highScores.quizzesCompleted > 0 && (
+            <p className="text-center text-xs text-charcoal-muted">
+              Best {highScores.bestPercentage}% · {highScores.quizzesCompleted} completed
+              {highScores.lastScore !== null &&
+                highScores.lastTotal !== null &&
+                ` · Last ${highScores.lastScore} / ${highScores.lastTotal}`}
             </p>
-          </Card>
+          )}
         </div>
       )}
 
       {/* Active Quiz Stage */}
       {stage === 'active' && activeQuestion && (
-        <div className="mx-auto max-w-2xl space-y-6">
-          <div className="px-1">
-            <div className="mb-2 flex items-center justify-between text-xs font-medium text-charcoal-muted">
-              <span>
-                Question {currentIdx + 1} of {questions.length}
-              </span>
-              <span>
-                Score: <strong className="text-savanna-green">{correctCount}</strong>
-              </span>
-            </div>
+        <div className="space-y-14">
+          <div className="space-y-3">
             <ProgressBar
               value={currentIdx + (submittedRecord ? 1 : 0)}
               max={questions.length}
               showPercentage={false}
               tone="green"
             />
+            <p className="text-center text-xs text-charcoal-muted">
+              Question {currentIdx + 1} of {questions.length}
+            </p>
           </div>
 
-          <Card className="space-y-8 sm:p-10">
-            <div className="flex items-start justify-between gap-3">
-              <div className="space-y-3">
-                <Badge tone="neutral">{activeQuestion.phrase.category}</Badge>
-                <p className="text-xs font-medium text-charcoal-muted">
-                  {activeQuestion.promptLabel}
-                </p>
-                <h2 className="text-2xl font-semibold leading-snug text-charcoal sm:text-3xl">
-                  {activeQuestion.promptText}
-                </h2>
-              </div>
-
+          <div className="space-y-10">
+            <div className="space-y-4 text-center">
+              <p className="text-sm text-charcoal-muted">{activeQuestion.promptLabel}</p>
+              <h2 className="text-3xl font-semibold leading-snug text-balance text-charcoal sm:text-4xl">
+                {activeQuestion.promptText}
+              </h2>
               <button
                 type="button"
                 onClick={() => speakSwahili(activeQuestion.phrase.swahili)}
                 aria-label={`Listen to ${activeQuestion.phrase.swahili}`}
-                className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-warm-border bg-cream text-charcoal-muted hover:bg-cream-dark hover:text-charcoal"
+                className="mx-auto flex size-10 items-center justify-center rounded-full text-charcoal-muted hover:bg-cream-dark/60 hover:text-charcoal"
               >
-                <Volume2 className="size-4" aria-hidden="true" />
+                <Volume2 className="size-5" aria-hidden="true" />
               </button>
             </div>
 
             {/* Multiple Choice */}
             {activeQuestion.kind === 'multiple-choice' && activeQuestion.options && (
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3">
                 {activeQuestion.options.map((option) => {
                   const isSelected = submittedRecord?.userAnswer === option;
                   const isCorrectOption =
@@ -369,9 +298,9 @@ export function QuizzesPage() {
                       disabled={Boolean(submittedRecord)}
                       onClick={() => handleMultipleChoiceAnswer(option)}
                       className={cn(
-                        'flex items-center justify-between gap-2 rounded-2xl border px-5 py-4 text-left text-sm font-medium transition-colors',
+                        'flex items-center justify-between gap-2 rounded-card border px-6 py-5 text-left text-base font-medium transition-colors',
                         !submittedRecord &&
-                          'border-warm-border bg-cream/40 text-charcoal hover:border-savanna-green hover:bg-savanna-green-soft/40',
+                          'border-warm-border bg-surface text-charcoal hover:border-savanna-green hover:bg-savanna-green-soft',
                         submittedRecord &&
                           isCorrectOption &&
                           'border-savanna-green bg-savanna-green-soft text-savanna-green',
@@ -382,7 +311,7 @@ export function QuizzesPage() {
                         submittedRecord &&
                           !isSelected &&
                           !isCorrectOption &&
-                          'border-warm-border bg-surface text-charcoal-muted opacity-60',
+                          'border-warm-border/55 bg-surface text-charcoal-muted opacity-60',
                       )}
                     >
                       <span>{option}</span>
@@ -400,8 +329,9 @@ export function QuizzesPage() {
 
             {/* Type Translation */}
             {activeQuestion.kind === 'type-translation' && (
-              <form onSubmit={handleTypedSubmit} className="space-y-3">
+              <form onSubmit={handleTypedSubmit} className="space-y-6">
                 <Input
+                  key={activeQuestion.id}
                   label="Your answer"
                   placeholder="Type your translation here..."
                   value={typedInput}
@@ -413,7 +343,8 @@ export function QuizzesPage() {
                   <Button
                     type="submit"
                     variant="primary"
-                    size="md"
+                    size="lg"
+                    className="w-full"
                     disabled={!typedInput.trim()}
                   >
                     Check Answer
@@ -424,106 +355,83 @@ export function QuizzesPage() {
 
             {/* Feedback & Next */}
             {submittedRecord && (
-              <div className="space-y-5 border-t border-warm-border/70 pt-6">
+              <div className="space-y-8">
                 <div
+                  role="status"
                   className={cn(
-                    'flex items-start gap-3 rounded-2xl p-5 text-sm leading-relaxed',
+                    'rounded-2xl p-5 text-sm leading-relaxed',
                     submittedRecord.isCorrect
                       ? 'bg-savanna-green-soft text-savanna-green'
                       : 'bg-terracotta-soft text-terracotta-hover',
                   )}
                 >
-                  {submittedRecord.isCorrect ? (
-                    <CheckCircle2 className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-                  ) : (
-                    <XCircle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                  <p className="font-semibold">
+                    {submittedRecord.isCorrect ? 'Sahihi! Correct.' : 'Not quite.'}
+                  </p>
+                  {submittedRecord.note && (
+                    <p className="mt-1">{submittedRecord.note}</p>
                   )}
-                  <div>
-                    <p className="font-semibold">
-                      {submittedRecord.isCorrect ? 'Sahihi! Correct.' : 'Not quite.'}
+                  {!submittedRecord.isCorrect && (
+                    <p className="mt-1">
+                      Correct answer: <strong>{activeQuestion.correctAnswer}</strong>
                     </p>
-                    {submittedRecord.note && (
-                      <p className="mt-0.5 text-xs font-medium">
-                        {submittedRecord.note}
-                      </p>
-                    )}
-                    {!submittedRecord.isCorrect && (
-                      <p className="mt-0.5 text-xs">
-                        Correct answer:{' '}
-                        <strong>{activeQuestion.correctAnswer}</strong>
-                      </p>
-                    )}
-                    <p className="mt-1 text-xs opacity-90">
-                      Example: {activeQuestion.phrase.example}
-                    </p>
-                  </div>
+                  )}
+                  <p className="mt-2 opacity-90">
+                    Example: {activeQuestion.phrase.example}
+                  </p>
                 </div>
 
-                <Button variant="primary" size="md" onClick={handleNextQuestion}>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  className="w-full"
+                  onClick={handleNextQuestion}
+                >
                   {currentIdx + 1 < questions.length
                     ? 'Next Question'
                     : 'See Results'}
                 </Button>
               </div>
             )}
-          </Card>
+          </div>
         </div>
       )}
 
       {/* Results Stage */}
       {stage === 'results' && (
-        <div className="mx-auto max-w-2xl space-y-10">
+        <div className="space-y-8">
           {(() => {
             const total = questions.length;
             const percentage = total > 0 ? Math.round((correctCount / total) * 100) : 0;
             const feedback = getScoreFeedback(percentage);
 
             return (
-              <Card className="space-y-8 sm:p-10">
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <Award className="size-6 text-terracotta" aria-hidden="true" />
-                      <h2 className="text-2xl font-semibold leading-snug text-charcoal">
-                        {feedback.title}
-                      </h2>
-                    </div>
-                    <p className="text-sm text-charcoal-muted">{feedback.message}</p>
-                  </div>
-
-                  {isNewBest && <Badge tone="ochre">New High Score!</Badge>}
-                </div>
-
-                <div className="rounded-2xl bg-cream p-6">
-                  <div className="mb-3 flex items-baseline justify-between">
-                    <span className="text-sm font-medium text-charcoal-muted">
-                      Final Score
-                    </span>
-                    <span className="text-2xl font-bold text-savanna-green">
-                      {correctCount} / {total} ({percentage}%)
-                    </span>
-                  </div>
-                  <ProgressBar
-                    value={correctCount}
-                    max={total}
-                    showPercentage={false}
-                    tone="green"
-                  />
-                </div>
-
-                <div className="flex flex-wrap gap-3">
-                  <Button
-                    variant="primary"
-                    size="md"
-                    onClick={startQuiz}
-                    leftIcon={<RotateCcw className="size-4" aria-hidden="true" />}
-                  >
+              <Card className="py-16 text-center sm:py-20">
+                <p className="font-serif text-5xl font-semibold text-savanna-green">
+                  {correctCount} / {total}
+                </p>
+                <h2 className="mt-6 text-2xl font-semibold leading-snug text-charcoal">
+                  {feedback.title}
+                </h2>
+                <p className="mt-3 text-sm leading-relaxed text-charcoal-muted">
+                  {feedback.message}
+                </p>
+                {isNewBest && (
+                  <p className="mt-3 text-sm font-medium text-terracotta">
+                    New high score!
+                  </p>
+                )}
+                <div className="mt-10 flex flex-wrap justify-center gap-3">
+                  <Button variant="primary" size="lg" onClick={startQuiz}>
                     Restart Quiz
                   </Button>
                   <Button
-                    variant="outline"
-                    size="md"
-                    onClick={() => setStage('setup')}
+                    variant="ghost"
+                    size="lg"
+                    onClick={() => {
+                      setSettingsOpen(true);
+                      setStage('setup');
+                    }}
                   >
                     Change Settings
                   </Button>
@@ -532,40 +440,22 @@ export function QuizzesPage() {
             );
           })()}
 
-          {/* Answer Review */}
-          <section aria-labelledby="review-heading" className="space-y-5">
-            <h3 id="review-heading" className="text-xl font-semibold leading-snug text-charcoal">
-              Answer Review
-            </h3>
-            <div className="space-y-4">
+          <Disclosure label="Review your answers">
+            <ul className="divide-y divide-warm-border/60">
               {answers.map((record) => (
-                <Card
+                <li
                   key={record.question.id}
-                  className={cn(
-                    'flex items-start justify-between gap-4 p-5 sm:p-6',
-                    record.isCorrect
-                      ? 'border-savanna-green/30'
-                      : 'border-terracotta/30',
-                  )}
+                  className="flex items-start justify-between gap-4 py-5"
                 >
                   <div className="space-y-1 text-sm">
                     <p className="font-semibold text-charcoal">
                       {record.question.promptText}
                     </p>
-                    <p className="text-xs text-charcoal-muted">
-                      Your answer:{' '}
-                      <span
-                        className={
-                          record.isCorrect
-                            ? 'font-medium text-savanna-green'
-                            : 'font-medium text-terracotta'
-                        }
-                      >
-                        {record.userAnswer}
-                      </span>
+                    <p className="text-charcoal-muted">
+                      Your answer: {record.userAnswer}
                     </p>
                     {!record.isCorrect && (
-                      <p className="text-xs text-charcoal-muted">
+                      <p className="text-charcoal-muted">
                         Correct:{' '}
                         <strong className="text-charcoal">
                           {record.question.correctAnswer}
@@ -576,18 +466,18 @@ export function QuizzesPage() {
                   {record.isCorrect ? (
                     <CheckCircle2
                       className="size-5 shrink-0 text-savanna-green"
-                      aria-hidden="true"
+                      aria-label="Correct"
                     />
                   ) : (
                     <XCircle
                       className="size-5 shrink-0 text-terracotta"
-                      aria-hidden="true"
+                      aria-label="Incorrect"
                     />
                   )}
-                </Card>
+                </li>
               ))}
-            </div>
-          </section>
+            </ul>
+          </Disclosure>
         </div>
       )}
     </div>

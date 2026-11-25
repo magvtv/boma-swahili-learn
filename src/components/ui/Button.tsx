@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { ComponentPropsWithRef, ReactNode } from 'react';
 import { cn } from '../../utils/cn';
 
 type ButtonVariant =
@@ -10,7 +10,7 @@ type ButtonVariant =
   | 'inverse';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends ComponentPropsWithRef<'button'> {
   variant?: ButtonVariant;
   size?: ButtonSize;
   leftIcon?: ReactNode;

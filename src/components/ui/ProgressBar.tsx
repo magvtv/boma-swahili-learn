@@ -30,10 +30,10 @@ export function ProgressBar({
   const percent = Math.round((clamped / safeMax) * 100);
 
   return (
-    <div className={cn('space-y-1.5', className)}>
+    <div className={cn('space-y-2.5', className)}>
       {(label || showPercentage) && (
-        <div className="flex items-center justify-between gap-2 text-xs font-medium">
-          {label ? <span className="text-charcoal">{label}</span> : <span />}
+        <div className="flex items-center justify-between gap-2 text-xs">
+          {label ? <span className="text-charcoal-muted">{label}</span> : <span />}
           {showPercentage && (
             <span className="tabular-nums text-charcoal-muted">{percent}%</span>
           )}
@@ -45,11 +45,11 @@ export function ProgressBar({
         aria-valuenow={clamped}
         aria-valuemin={0}
         aria-valuemax={safeMax}
-        className="h-2.5 w-full overflow-hidden rounded-full bg-cream-dark"
+        className="h-1 w-full overflow-hidden rounded-full bg-cream-dark"
       >
         <div
           className={cn(
-            'h-full rounded-full transition-[width] duration-300 ease-out',
+            'h-full rounded-full transition-[width] duration-200 ease-out',
             TONE_FILL[tone],
           )}
           style={{ width: `${percent}%` }}

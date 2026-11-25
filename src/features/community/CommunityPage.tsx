@@ -1,6 +1,5 @@
-import { Eye, MessageSquarePlus, Send, Users } from 'lucide-react';
-import { useState } from 'react';
-import { Badge, Button, Card, Input, PageHeader } from '../../components/ui';
+import { useRef, useState } from 'react';
+import { Button, Card, Input, PageHeader } from '../../components/ui';
 
 type CommentTopic = 'Question' | 'Cultural Tip' | 'Recipe Note';
 
@@ -64,12 +63,6 @@ function writeComments(comments: CommunityComment[]): void {
   }
 }
 
-const TOPIC_TONE: Record<CommentTopic, 'green' | 'terracotta' | 'ochre'> = {
-  Question: 'ochre',
-  'Cultural Tip': 'green',
-  'Recipe Note': 'terracotta',
-};
-
 function readAndIncrementVisitorCount(): number {
   try {
     const storedRaw = window.localStorage.getItem(VISITOR_STORAGE_KEY);
@@ -97,6 +90,8 @@ export function CommunityPage() {
   const [message, setMessage] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
   const [visitorCount] = useState<number>(() => readAndIncrementVisitorCount());
+  const [composerOpen, setComposerOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -123,47 +118,45 @@ export function CommunityPage() {
     setAuthor('');
     setMessage('');
     setFormError(null);
+    setComposerOpen(false);
+    toggleRef.current?.focus();
   };
 
   return (
     <div className="space-y-12">
       <PageHeader
-        tone="ochre"
-        icon={<Users className="size-5" aria-hidden="true" />}
         eyebrow="Jamii"
-        title="Learner Community"
-        description="Share Swahili questions, Kenyan culinary notes, and study tips with fellow learners."
+        title="Community"
+        description="Questions, kitchen notes, and study tips from fellow learners."
         action={
-          <p className="inline-flex items-center gap-2 text-xs font-medium text-charcoal-muted">
-            <Eye className="size-4 text-savanna-green" aria-hidden="true" />
-            <span className="tabular-nums">
-              {visitorCount.toLocaleString()} learners visited
-            </span>
-          </p>
+          <Button
+            ref={toggleRef}
+            variant={composerOpen ? 'ghost' : 'primary'}
+            size="lg"
+            aria-expanded={composerOpen}
+            onClick={() => {
+              setComposerOpen((open) => !open);
+              setFormError(null);
+            }}
+          >
+            {composerOpen ? 'Close' : 'Leave a Note'}
+          </Button>
         }
       />
 
-      <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
-        {/* Comment Form */}
-        <Card className="h-fit space-y-6 lg:col-span-5">
-          <div className="flex items-center gap-2">
-            <MessageSquarePlus
-              className="size-5 text-terracotta"
-              aria-hidden="true"
-            />
-            <h2 className="text-xl font-semibold leading-snug text-charcoal">Leave a Note</h2>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
+      {composerOpen && (
+        <Card>
+          <form onSubmit={handleSubmit} className="space-y-8">
             <Input
               label="Your Name"
               placeholder="e.g. Kamau or Sarah"
               value={author}
               onChange={(event) => setAuthor(event.target.value)}
               maxLength={40}
+              autoFocus
             />
 
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               <span className="block text-sm font-medium text-charcoal">Topic</span>
               <div className="flex flex-wrap gap-2">
                 {(['Cultural Tip', 'Question', 'Recipe Note'] as const).map(
@@ -177,8 +170,8 @@ export function CommunityPage() {
                         aria-pressed={active}
                         className={
                           active
-                            ? 'rounded-full border border-savanna-green bg-savanna-green px-3.5 py-1.5 text-xs font-medium text-cream'
-                            : 'rounded-full border border-warm-border/70 bg-cream px-3.5 py-1.5 text-xs font-medium text-charcoal-muted hover:bg-cream-dark'
+                            ? 'rounded-full border border-savanna-green bg-savanna-green px-4 py-2 text-xs font-medium text-cream'
+                            : 'rounded-full border border-warm-border/70 px-4 py-2 text-xs font-medium text-charcoal-muted hover:text-charcoal'
                         }
                       >
                         {itemTopic}
@@ -189,7 +182,7 @@ export function CommunityPage() {
               </div>
             </div>
 
-            <div className="space-y-2.5">
+            <div className="space-y-3">
               <label
                 htmlFor="community-message"
                 className="block text-sm font-medium text-charcoal"
@@ -198,7 +191,7 @@ export function CommunityPage() {
               </label>
               <textarea
                 id="community-message"
-                rows={5}
+                rows={4}
                 maxLength={320}
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
@@ -208,62 +201,37 @@ export function CommunityPage() {
             </div>
 
             {formError && (
-              <p role="alert" className="text-xs font-medium text-terracotta">
+              <p role="alert" className="text-sm text-terracotta-hover">
                 {formError}
               </p>
             )}
 
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              leftIcon={<Send className="size-4" aria-hidden="true" />}
-              className="w-full"
-            >
+            <Button type="submit" variant="primary" size="lg">
               Post to Community
             </Button>
           </form>
         </Card>
+      )}
 
-        {/* Comments Feed */}
-        <section
-          aria-labelledby="community-feed-heading"
-          className="space-y-5 lg:col-span-7"
-        >
-          <h2
-            id="community-feed-heading"
-            className="text-xl font-semibold leading-snug text-charcoal"
-          >
-            Recent Notes ({comments.length})
-          </h2>
+      <section aria-labelledby="community-feed-heading" className="space-y-6">
+        <h2 id="community-feed-heading" className="sr-only">
+          Recent notes
+        </h2>
 
-          <div className="space-y-5">
-            {comments.map((comment) => (
-              <Card key={comment.id} className="space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-3">
-                    <span className="flex size-9 items-center justify-center rounded-full bg-savanna-green-soft text-xs font-bold text-savanna-green">
-                      {comment.author.charAt(0).toUpperCase()}
-                    </span>
-                    <span className="text-sm font-semibold text-charcoal">
-                      {comment.author}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Badge tone={TOPIC_TONE[comment.topic]}>{comment.topic}</Badge>
-                    <span className="text-xs text-charcoal-muted">
-                      {new Date(comment.createdAt).toLocaleDateString()}
-                    </span>
-                  </div>
-                </div>
-                <p className="text-sm leading-relaxed text-charcoal-muted">
-                  {comment.message}
-                </p>
-              </Card>
-            ))}
-          </div>
-        </section>
-      </div>
+        {comments.map((comment) => (
+          <Card key={comment.id}>
+            <p className="text-base leading-relaxed text-charcoal">{comment.message}</p>
+            <p className="mt-6 text-xs text-charcoal-muted">
+              <span className="font-medium text-charcoal">{comment.author}</span> ·{' '}
+              {comment.topic} · {new Date(comment.createdAt).toLocaleDateString()}
+            </p>
+          </Card>
+        ))}
+      </section>
+
+      <p className="text-center text-xs tabular-nums text-charcoal-muted">
+        {visitorCount.toLocaleString()} learners visited
+      </p>
     </div>
   );
 }

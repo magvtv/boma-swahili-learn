@@ -17,10 +17,12 @@ const MOBILE_BOTTOM_IDS = new Set([
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const baseItem =
-    'flex items-center gap-3.5 rounded-2xl px-4 py-3 text-sm transition-colors duration-150';
+    'group flex items-center gap-3.5 rounded-2xl px-4 py-3 text-sm transition-colors duration-100';
+  const iconClass =
+    'size-4 shrink-0 stroke-[1.5] opacity-60 group-aria-[current=page]:opacity-100';
 
   return (
-    <ul className="space-y-1.5">
+    <ul className="space-y-2">
       <li>
         <NavLink
           to="/"
@@ -30,12 +32,12 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             cn(
               baseItem,
               isActive
-                ? 'bg-savanna-green-soft/80 font-semibold text-savanna-green'
-                : 'text-charcoal-muted hover:bg-cream-dark/60 hover:text-charcoal',
+                ? 'bg-savanna-green-soft/60 font-medium text-savanna-green'
+                : 'text-charcoal-muted hover:text-charcoal',
             )
           }
         >
-          <Home className="size-4.5 shrink-0" aria-hidden="true" />
+          <Home className={iconClass} aria-hidden="true" />
           <span>Dashboard</span>
         </NavLink>
       </li>
@@ -48,12 +50,12 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
               cn(
                 baseItem,
                 isActive
-                  ? 'bg-savanna-green-soft/80 font-semibold text-savanna-green'
-                  : 'text-charcoal-muted hover:bg-cream-dark/60 hover:text-charcoal',
+                  ? 'bg-savanna-green-soft/60 font-medium text-savanna-green'
+                  : 'text-charcoal-muted hover:text-charcoal',
               )
             }
           >
-            <FeatureIcon id={feature.id} className="size-4.5 shrink-0" />
+            <FeatureIcon id={feature.id} className={iconClass} />
             <span className="flex-1">{feature.title}</span>
           </NavLink>
         </li>
@@ -222,9 +224,8 @@ export function AppLayout() {
                 </span>
                 <div>
                   <p className="text-sm font-bold leading-none text-charcoal">
-                    Boma Language Lab
+                    Jasmin Swahili Lab
                   </p>
-                  <p className="mt-1 text-xs text-terracotta">Jifunze Kiswahili</p>
                 </div>
               </div>
               <button
@@ -241,19 +242,12 @@ export function AppLayout() {
             <div className="flex-1 overflow-y-auto">
               <NavLinks onNavigate={closeDrawer} />
             </div>
-
-            <div className="mt-6 rounded-2xl border border-warm-border bg-cream p-3.5 text-xs text-charcoal-muted">
-              <p className="font-semibold text-charcoal">Habari za leo!</p>
-              <p className="mt-1 leading-relaxed">
-                Five unhurried minutes over chai is enough to keep your Swahili warm.
-              </p>
-            </div>
           </nav>
         </div>
       </dialog>
 
       {/* Top Header */}
-      <header className="sticky top-0 z-30 border-b border-warm-border/60 bg-surface">
+      <header className="sticky top-0 z-30 border-b border-warm-border/40 bg-cream">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-3.5 sm:flex-nowrap sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <button
@@ -271,21 +265,16 @@ export function AppLayout() {
               <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-savanna-green text-cream shadow-xs">
                 <Flame className="size-5" aria-hidden="true" />
               </span>
-              <div>
-                <span className="block text-sm font-bold tracking-tight text-charcoal sm:text-base">
-                  Boma Language Lab
-                </span>
-                <span className="block text-[11px] font-medium text-terracotta">
-                  Kiswahili Studio
-                </span>
-              </div>
+              <span className="text-sm font-semibold tracking-tight text-charcoal sm:text-base">
+                Jasmin Swahili Lab
+              </span>
             </NavLink>
           </div>
 
           {/* Global Search Bar */}
           <div
             ref={searchContainerRef}
-            className="relative order-3 w-full sm:order-2 sm:max-w-xs md:max-w-sm"
+            className="relative w-full sm:max-w-xs"
           >
             <Input
               type="search"
@@ -410,36 +399,21 @@ export function AppLayout() {
               </div>
             )}
           </div>
-
-          <div className="order-2 flex items-center gap-3 sm:order-3">
-            <span className="hidden text-xs font-medium text-savanna-green md:inline-flex">
-              Karibu mezani — Welcome
-            </span>
-          </div>
         </div>
       </header>
 
       {/* Desktop Sidebar + Main Content */}
-      <div className="mx-auto flex max-w-7xl gap-12 px-5 py-8 sm:px-6 lg:px-8 lg:py-10">
-        <aside className="hidden w-60 shrink-0 lg:block">
-          <div className="sticky top-28 py-2">
+      <div className="mx-auto flex max-w-7xl gap-12 px-5 py-10 sm:px-6 lg:px-8 lg:py-16 xl:gap-20">
+        <aside className="hidden w-52 shrink-0 lg:block">
+          <div className="sticky top-32">
             <nav aria-label="Primary">
-              <p className="mb-4 px-4 text-xs font-medium text-charcoal-muted">
-                Learning modules
-              </p>
               <NavLinks />
             </nav>
-
-            <div className="mt-10 border-t border-warm-border/70 px-4 pt-6 text-xs leading-relaxed">
-              <p className="font-medium text-terracotta">Neno la Siku</p>
-              <p className="mt-2 font-serif text-base text-charcoal">“Chakula kitamu”</p>
-              <p className="mt-1 text-charcoal-muted">Delicious food</p>
-            </div>
           </div>
         </aside>
 
         <main className="min-w-0 flex-1 pb-24 lg:pb-16">
-          <div key={location.pathname} className="boma-page-enter">
+          <div key={location.pathname} className="boma-page-enter mx-auto max-w-3xl">
             <Outlet />
           </div>
         </main>
@@ -448,7 +422,7 @@ export function AppLayout() {
       {/* Mobile Bottom Navigation Bar */}
       <nav
         aria-label="Mobile quick navigation"
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-warm-border bg-surface px-2 py-1.5 lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-warm-border/50 bg-cream px-2 py-2 lg:hidden"
       >
         <ul className="mx-auto grid max-w-md grid-cols-5 gap-1">
           <li>
@@ -459,7 +433,7 @@ export function AppLayout() {
                 cn(
                   'flex flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 text-[11px] font-medium transition-colors',
                   isActive
-                    ? 'bg-savanna-green-soft text-savanna-green'
+                    ? 'bg-savanna-green-soft/60 text-savanna-green'
                     : 'text-charcoal-muted hover:text-charcoal',
                 )
               }
@@ -476,7 +450,7 @@ export function AppLayout() {
                   cn(
                     'flex flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 text-[11px] font-medium transition-colors',
                     isActive
-                      ? 'bg-savanna-green-soft text-savanna-green'
+                      ? 'bg-savanna-green-soft/60 text-savanna-green'
                       : 'text-charcoal-muted hover:text-charcoal',
                   )
                 }

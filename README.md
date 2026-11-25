@@ -1,4 +1,4 @@
-# Boma Language Lab — Kiswahili Studio
+# Jasmin Swahili Lab
 
 A modern, mobile-first Swahili learning web application inspired by Kenyan and East African culinary culture.
 

@@ -17,21 +17,21 @@
   --color-charcoal: #2A211B;
   --color-charcoal-muted: #61554C;
   --color-warm-border: #E5DDD2;
-  --radius-card: 1.25rem;
-  --shadow-soft: 0 1px 12px rgba(42, 33, 27, 0.03);
+  --radius-card: 1.5rem;
+  --shadow-soft: 0 2px 24px rgba(42, 33, 27, 0.025);
 }
 
 /* In the components layer so utility classes passed to <Card> can override these */
 @layer components {
   .boma-card {
-    border: 1px solid --alpha(var(--color-warm-border) / 70%);
+    border: 1px solid --alpha(var(--color-warm-border) / 45%);
     border-radius: var(--radius-card);
     background-color: var(--color-surface);
     box-shadow: var(--shadow-soft);
-    padding: --spacing(6);
+    padding: --spacing(7);
 
     @variant sm {
-      padding: --spacing(8);
+      padding: --spacing(12);
     }
   }
 }
@@ -40,9 +40,6 @@
   html {
     font-family: "Bricolage Grotesque", "Figtree", sans-serif;
     background-color: var(--color-cream);
-    /* Subtle warm linen/paper grain texture */
-    background-image: radial-gradient(rgba(42, 33, 27, 0.035) 1px, transparent 0);
-    background-size: 20px 20px;
     color: var(--color-charcoal);
     min-height: 100%;
   }
@@ -77,10 +74,10 @@
 @media (prefers-reduced-motion: no-preference) {
   .boma-btn {
     transition:
-      background-color 160ms ease,
-      color 160ms ease,
-      border-color 160ms ease,
-      transform 140ms ease;
+      background-color 100ms ease,
+      color 100ms ease,
+      border-color 100ms ease,
+      transform 80ms ease;
   }
 
   .boma-btn:active:not(:disabled) {
@@ -88,18 +85,16 @@
   }
 
   .boma-page-enter {
-    animation: boma-page-fade-in 200ms ease-out both;
+    animation: boma-page-fade-in 120ms ease-out both;
   }
 }
 
 @keyframes boma-page-fade-in {
   from {
     opacity: 0;
-    translate: 0 4px;
   }
   to {
     opacity: 1;
-    translate: 0 0;
   }
 }
 
@@ -108,10 +103,10 @@
   opacity: 0;
   translate: 0 6px;
   transition:
-    opacity 180ms ease-out,
-    translate 180ms ease-out,
-    display 180ms ease-out,
-    overlay 180ms ease-out;
+    opacity 120ms ease-out,
+    translate 120ms ease-out,
+    display 120ms ease-out,
+    overlay 120ms ease-out;
   transition-behavior: allow-discrete;
 }
 
@@ -131,9 +126,9 @@
   background-color: rgba(42, 33, 27, 0.45);
   opacity: 0;
   transition:
-    opacity 180ms ease-out,
-    display 180ms ease-out,
-    overlay 180ms ease-out;
+    opacity 120ms ease-out,
+    display 120ms ease-out,
+    overlay 120ms ease-out;
   transition-behavior: allow-discrete;
 }
 
@@ -247,7 +242,7 @@
 .boma-card-flipper {
   position: relative;
   transform-style: preserve-3d;
-  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .boma-card-flipper[data-flipped="true"] {

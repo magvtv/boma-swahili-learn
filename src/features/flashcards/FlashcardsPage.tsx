@@ -1,15 +1,18 @@
 import {
-  CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Layers,
   RotateCcw,
   Shuffle,
   Volume2,
-  XCircle,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Badge, Button, Card, PageHeader, ProgressBar } from '../../components/ui';
+import {
+  Button,
+  Card,
+  Disclosure,
+  PageHeader,
+  ProgressBar,
+} from '../../components/ui';
 import {
   PHRASES,
   PHRASE_CATEGORIES,
@@ -99,118 +102,39 @@ export function FlashcardsPage() {
     }
   };
 
+  const deckSummary = [
+    selectedCategory === 'All' ? 'All cards' : selectedCategory,
+    unknownOnly && 'unknown only',
+    shuffleSeed > 0 && 'shuffled',
+  ]
+    .filter(Boolean)
+    .join(', ');
+
   return (
-    <div className="space-y-10">
+    <div className="mx-auto max-w-xl space-y-10">
       <PageHeader
-        tone="terracotta"
-        icon={<Layers className="size-5" aria-hidden="true" />}
         eyebrow="Kadi za Maneno"
-        title="Culinary Flashcards"
-        description="Tap a card to flip between Kiswahili and English, then mark what you know."
-        action={
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setShuffleSeed((s) => s + 1);
-                setCurrentIndex(0);
-                setFlipped(false);
-              }}
-              leftIcon={<Shuffle className="size-4" aria-hidden="true" />}
-            >
-              Shuffle
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                resetProgress();
-                setCurrentIndex(0);
-                setFlipped(false);
-              }}
-              leftIcon={<RotateCcw className="size-4" aria-hidden="true" />}
-            >
-              Reset
-            </Button>
-          </div>
-        }
+        title="Flashcards"
+        quiet
       />
-
-      {/* Progress */}
-      <ProgressBar
-        value={knownSet.size}
-        max={PHRASES.length}
-        label={`Overall Mastery (${knownSet.size} of ${PHRASES.length} cards known)`}
-        tone="terracotta"
-      />
-
-      {/* Category & Unknown Filters */}
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div
-          className="flex flex-wrap gap-2"
-          role="group"
-          aria-label="Filter flashcards by category"
-        >
-          {(['All', ...PHRASE_CATEGORIES] as const).map((category) => {
-            const active = selectedCategory === category;
-            return (
-              <button
-                key={category}
-                type="button"
-                onClick={() => handleSelectCategory(category)}
-                aria-pressed={active}
-                className={cn(
-                  'rounded-full border px-4 py-2 text-xs font-medium transition-colors',
-                  active
-                    ? 'border-savanna-green bg-savanna-green text-cream'
-                    : 'border-warm-border/70 bg-surface text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
-                )}
-              >
-                {category}
-              </button>
-            );
-          })}
-        </div>
-
-        <button
-          type="button"
-          onClick={() => {
-            setUnknownOnly((v) => !v);
-            setCurrentIndex(0);
-            setFlipped(false);
-          }}
-          aria-pressed={unknownOnly}
-          className={cn(
-            'rounded-full border px-4 py-2 text-xs font-medium transition-colors',
-            unknownOnly
-              ? 'border-terracotta bg-terracotta-soft text-terracotta-hover'
-              : 'border-warm-border/70 bg-surface text-charcoal-muted hover:bg-cream-dark',
-          )}
-        >
-          Review Unknown Only
-        </button>
-      </div>
 
       {speechNotice && (
-        <p className="rounded-xl border border-warm-border bg-ochre-soft px-4 py-2.5 text-xs font-medium text-charcoal">
+        <p role="status" className="text-sm text-charcoal-muted">
           {speechNotice}
         </p>
       )}
 
-      {/* Flashcard Stage */}
       {!activeCard ? (
-        <Card className="space-y-3 py-16 text-center">
+        <Card className="space-y-4 py-20 text-center">
           <p className="text-base font-semibold text-charcoal">
             Hongera! No unknown cards left in this filter.
           </p>
           <p className="text-sm text-charcoal-muted">
-            Switch off “Review Unknown Only” or choose another category to keep practicing.
+            Turn off “Review unknown only” or choose another category to keep practicing.
           </p>
-          <div className="pt-2">
+          <div className="pt-4">
             <Button
-              variant="secondary"
-              size="sm"
+              variant="primary"
               onClick={() => {
                 setUnknownOnly(false);
                 setSelectedCategory('All');
@@ -221,135 +145,193 @@ export function FlashcardsPage() {
           </div>
         </Card>
       ) : (
-        <div className="mx-auto max-w-2xl space-y-6">
-          <div className="flex items-center justify-between text-xs font-medium text-charcoal-muted">
-            <span>
-              Card {safeIndex + 1} of {deck.length}
-            </span>
-            <Badge tone={knownSet.has(activeCard.id) ? 'green' : 'neutral'}>
-              {knownSet.has(activeCard.id) ? 'Known' : 'Learning'}
-            </Badge>
-          </div>
+        <div className="space-y-8">
+          <div className="space-y-4">
+            <div className="boma-card-scene">
+              <div
+                role="button"
+                tabIndex={0}
+                aria-pressed={flipped}
+                aria-label={`Flashcard: ${activeCard.swahili}. Activate to flip.`}
+                onClick={() => setFlipped((f) => !f)}
+                onKeyDown={(event) => {
+                  // Let the listen button handle its own key presses
+                  if (event.target !== event.currentTarget) return;
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setFlipped((f) => !f);
+                  }
+                }}
+                data-flipped={flipped}
+                className="boma-card-flipper min-h-[26rem] cursor-pointer rounded-card focus-visible:outline-2 focus-visible:outline-terracotta"
+              >
+                {/* Front Face (Swahili) */}
+                <div className="boma-card-face absolute inset-0 flex flex-col rounded-card border border-warm-border/45 bg-surface p-7 shadow-soft sm:p-10">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs text-charcoal-muted">
+                      {activeCard.category}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleSpeak(activeCard.swahili);
+                      }}
+                      aria-label={`Listen to ${activeCard.swahili}`}
+                      className="flex size-10 items-center justify-center rounded-full text-charcoal-muted hover:bg-cream-dark/60 hover:text-charcoal"
+                    >
+                      <Volume2 className="size-5" aria-hidden="true" />
+                    </button>
+                  </div>
 
-          <div className="boma-card-scene">
-            <div
-              role="button"
-              tabIndex={0}
-              aria-pressed={flipped}
-              aria-label={`Flashcard: ${activeCard.swahili}. Activate to flip.`}
-              onClick={() => setFlipped((f) => !f)}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter' || event.key === ' ') {
-                  event.preventDefault();
-                  setFlipped((f) => !f);
-                }
-              }}
-              data-flipped={flipped}
-              className="boma-card-flipper min-h-80 cursor-pointer rounded-card focus-visible:outline-2 focus-visible:outline-terracotta"
-            >
-              {/* Front Face (Swahili) */}
-              <div className="boma-card-face absolute inset-0 flex flex-col justify-between rounded-card border border-warm-border/70 bg-surface p-7 shadow-soft sm:p-10">
-                <div className="flex items-center justify-between gap-2">
-                  <Badge tone="terracotta">{activeCard.category}</Badge>
-                  <button
-                    type="button"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleSpeak(activeCard.swahili);
-                    }}
-                    aria-label={`Listen to ${activeCard.swahili}`}
-                    className="flex size-9 items-center justify-center rounded-xl border border-warm-border bg-cream text-charcoal-muted hover:bg-cream-dark hover:text-charcoal"
-                  >
-                    <Volume2 className="size-4" aria-hidden="true" />
-                  </button>
-                </div>
+                  <div className="my-auto space-y-3 text-center">
+                    <p className="font-serif text-4xl font-semibold leading-snug text-charcoal sm:text-5xl">
+                      {activeCard.swahili}
+                    </p>
+                    <p className="text-sm italic text-charcoal-muted">
+                      {activeCard.pronunciation}
+                    </p>
+                  </div>
 
-                <div className="my-auto text-center space-y-2">
-                  <p className="text-xs font-semibold tracking-wider text-charcoal-muted uppercase">
-                    Kiswahili
-                  </p>
-                  <p className="font-serif text-3xl font-semibold leading-snug text-charcoal sm:text-4xl">
-                    {activeCard.swahili}
-                  </p>
-                  <p className="text-xs italic text-charcoal-muted">
-                    {activeCard.pronunciation}
+                  <p className="text-center text-xs text-charcoal-muted">
+                    Tap to see the meaning
                   </p>
                 </div>
 
-                <p className="text-center text-xs text-charcoal-muted">
-                  Tap card to reveal English meaning
-                </p>
-              </div>
+                {/* Back Face (English + Example) */}
+                <div className="boma-card-face boma-card-face-back absolute inset-0 flex flex-col rounded-card bg-savanna-green p-7 text-cream shadow-soft sm:p-10">
+                  <span className="text-xs text-cream/75">{activeCard.swahili}</span>
 
-              {/* Back Face (English + Example) */}
-              <div className="boma-card-face boma-card-face-back absolute inset-0 flex flex-col justify-between rounded-card border border-savanna-green/30 bg-savanna-green p-7 text-cream shadow-soft sm:p-10">
-                <div className="flex items-center justify-between gap-2">
-                  <span className="rounded-full bg-cream/15 px-2.5 py-0.5 text-xs font-medium text-cream">
-                    English Meaning
-                  </span>
-                  <span className="text-xs text-cream/80">{activeCard.swahili}</span>
+                  <div className="my-auto space-y-5 pb-6 text-center">
+                    <p className="font-serif text-3xl font-semibold leading-snug sm:text-4xl">
+                      {activeCard.english}
+                    </p>
+                    <p className="text-sm leading-relaxed text-cream/85">
+                      “{activeCard.example}”
+                    </p>
+                  </div>
                 </div>
-
-                <div className="my-auto text-center space-y-3">
-                  <p className="text-2xl font-bold sm:text-3xl">
-                    {activeCard.english}
-                  </p>
-                  <p className="rounded-2xl bg-cream/10 px-4 py-2.5 text-xs leading-relaxed text-cream/90 sm:text-sm">
-                    “{activeCard.example}”
-                  </p>
-                </div>
-
-                <p className="text-center text-xs text-cream/75">
-                  Tap card to flip back
-                </p>
               </div>
             </div>
           </div>
 
-          {/* Controls */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={goToPrev}
-                aria-label="Previous card"
-                leftIcon={<ChevronLeft className="size-4" aria-hidden="true" />}
-              >
-                Prev
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={goToNext}
-                aria-label="Next card"
-                rightIcon={<ChevronRight className="size-4" aria-hidden="true" />}
-              >
-                Next
-              </Button>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={handleMarkUnknown}
-                leftIcon={<XCircle className="size-4 text-terracotta" aria-hidden="true" />}
-              >
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="secondary" size="lg" onClick={handleMarkUnknown}>
                 Still Learning
               </Button>
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleMarkKnown}
-                leftIcon={<CheckCircle2 className="size-4" aria-hidden="true" />}
-              >
+              <Button variant="primary" size="lg" onClick={handleMarkKnown}>
                 I Know This
               </Button>
+            </div>
+
+            <div className="flex items-center justify-center gap-4 text-xs text-charcoal-muted">
+              <button
+                type="button"
+                onClick={goToPrev}
+                aria-label="Previous card"
+                className="flex size-10 items-center justify-center rounded-full hover:bg-cream-dark/60 hover:text-charcoal"
+              >
+                <ChevronLeft className="size-4" aria-hidden="true" />
+              </button>
+              <span className="tabular-nums">
+                Card {safeIndex + 1} of {deck.length}
+                {knownSet.has(activeCard.id) && ' · Known'}
+              </span>
+              <button
+                type="button"
+                onClick={goToNext}
+                aria-label="Next card"
+                className="flex size-10 items-center justify-center rounded-full hover:bg-cream-dark/60 hover:text-charcoal"
+              >
+                <ChevronRight className="size-4" aria-hidden="true" />
+              </button>
             </div>
           </div>
         </div>
       )}
+
+      <Disclosure label={`Deck options: ${deckSummary}`}>
+        <div className="space-y-6">
+          <ProgressBar
+            value={knownSet.size}
+            max={PHRASES.length}
+            label={`${knownSet.size} of ${PHRASES.length} cards known`}
+            showPercentage={false}
+            tone="terracotta"
+          />
+
+            <div
+              className="flex flex-wrap justify-center gap-2"
+              role="group"
+              aria-label="Filter flashcards by category"
+            >
+              {(['All', ...PHRASE_CATEGORIES] as const).map((category) => {
+                const active = selectedCategory === category;
+                return (
+                  <button
+                    key={category}
+                    type="button"
+                    onClick={() => handleSelectCategory(category)}
+                    aria-pressed={active}
+                    className={cn(
+                    'rounded-full border px-4 py-2 text-xs font-medium transition-colors',
+                    active
+                      ? 'border-savanna-green bg-savanna-green text-cream'
+                      : 'border-warm-border/70 bg-surface text-charcoal-muted hover:text-charcoal',
+                  )}
+                  >
+                    {category}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setUnknownOnly((v) => !v);
+                  setCurrentIndex(0);
+                  setFlipped(false);
+                }}
+                aria-pressed={unknownOnly}
+                className={cn(
+                  'rounded-full border px-4 py-2 text-xs font-medium transition-colors',
+                  unknownOnly
+                    ? 'border-terracotta bg-terracotta-soft text-terracotta-hover'
+                    : 'border-warm-border/70 bg-surface text-charcoal-muted hover:text-charcoal',
+                )}
+              >
+                Review unknown only
+              </button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setShuffleSeed((s) => s + 1);
+                  setCurrentIndex(0);
+                  setFlipped(false);
+                }}
+                leftIcon={<Shuffle className="size-4" aria-hidden="true" />}
+              >
+                Shuffle
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  resetProgress();
+                  setCurrentIndex(0);
+                  setFlipped(false);
+                }}
+                leftIcon={<RotateCcw className="size-4" aria-hidden="true" />}
+              >
+                Reset progress
+              </Button>
+            </div>
+        </div>
+      </Disclosure>
     </div>
   );
 }

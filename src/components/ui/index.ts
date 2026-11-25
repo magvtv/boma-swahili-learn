@@ -1,9 +1,11 @@
 export { Badge } from './Badge';
 export { Button } from './Button';
 export { Card } from './Card';
+export { Disclosure } from './Disclosure';
 export { FeatureIcon } from './FeatureIcon';
 export { FeaturePlaceholder } from './FeaturePlaceholder';
 export { Input } from './Input';
 export { Modal } from './Modal';
 export { PageHeader } from './PageHeader';
 export { ProgressBar } from './ProgressBar';
+export { Select } from './Select';

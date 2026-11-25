@@ -1,13 +1,12 @@
-import { BookOpen, CheckCircle2, Circle, Layers, Search, Volume2 } from 'lucide-react';
+import { CheckCircle2, Search, Volume2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
-  Badge,
-  Button,
   Card,
   Input,
   PageHeader,
   ProgressBar,
+  Select,
 } from '../../components/ui';
 import {
   PHRASES,
@@ -17,13 +16,6 @@ import {
 import { usePhraseProgress } from '../../hooks/usePhraseProgress';
 import { cn } from '../../utils/cn';
 import { speakSwahili } from '../../utils/speech';
-
-const CATEGORY_TONES: Record<PhraseCategory, 'green' | 'terracotta' | 'ochre' | 'neutral'> = {
-  'Kitchen Tools': 'green',
-  Ingredients: 'terracotta',
-  'Cooking Actions': 'ochre',
-  'Common Phrases': 'neutral',
-};
 
 export function PhrasebookPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -63,79 +55,62 @@ export function PhrasebookPage() {
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-12">
       <PageHeader
-        tone="terracotta"
-        icon={<BookOpen className="size-5" aria-hidden="true" />}
         eyebrow="Kitabu cha Misemo"
-        title="Culinary Phrasebook"
-        description="Essential Kenyan kitchen tools, ingredients, cooking actions, and table expressions."
+        title="Phrasebook"
+        description="Tap a phrase to see how to say it and use it."
         action={
-          <Link to="/flashcards">
-            <Button
-              variant="primary"
-              size="sm"
-              leftIcon={<Layers className="size-4" aria-hidden="true" />}
-            >
-              Practice Flashcards
-            </Button>
+          <Link
+            to="/flashcards"
+            className="rounded-md text-sm text-savanna-green underline decoration-savanna-green/30 underline-offset-4 hover:decoration-savanna-green"
+          >
+            Practice with flashcards
           </Link>
         }
       />
 
-      {/* Mastery Progress */}
-      <ProgressBar
-        value={knownSet.size}
-        max={PHRASES.length}
-        label={`Phrasebook Mastery (${knownSet.size} of ${PHRASES.length} known)`}
-        tone="green"
-      />
-
-      {/* Filters & Search */}
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-        <div
-          className="flex flex-wrap gap-2"
-          role="group"
-          aria-label="Filter by category"
-        >
-          {(['All', ...PHRASE_CATEGORIES] as const).map((category) => {
-            const active = selectedCategory === category;
-            return (
-              <button
-                key={category}
-                type="button"
-                onClick={() => setSelectedCategory(category)}
-                aria-pressed={active}
-                className={cn(
-                  'rounded-full border px-4 py-2 text-xs font-medium transition-colors',
-                  active
-                    ? 'border-savanna-green bg-savanna-green text-cream'
-                    : 'border-warm-border/70 bg-surface text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
-                )}
-              >
-                {category}
-              </button>
-            );
-          })}
+      <div className="space-y-6">
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <div className="flex-1">
+            <Input
+              type="search"
+              aria-label="Filter phrases"
+              placeholder="Search Swahili or English..."
+              value={search}
+              onChange={(event) => {
+                const val = event.target.value;
+                setSearchParams(val ? { q: val } : {}, { replace: true });
+              }}
+              leftIcon={<Search className="size-4" />}
+            />
+          </div>
+          <Select
+            aria-label="Filter by category"
+            className="sm:w-52"
+            value={selectedCategory}
+            onChange={(event) =>
+              setSelectedCategory(event.target.value as 'All' | PhraseCategory)
+            }
+          >
+            <option value="All">All categories</option>
+            {PHRASE_CATEGORIES.map((category) => (
+              <option key={category}>{category}</option>
+            ))}
+          </Select>
         </div>
 
-        <div className="w-full sm:w-72 xl:w-64">
-          <Input
-            type="search"
-            aria-label="Filter phrases"
-            placeholder="Filter Swahili or English..."
-            value={search}
-            onChange={(event) => {
-              const val = event.target.value;
-              setSearchParams(val ? { q: val } : {}, { replace: true });
-            }}
-            leftIcon={<Search className="size-4" />}
-          />
-        </div>
+        <ProgressBar
+          value={knownSet.size}
+          max={PHRASES.length}
+          label={`${knownSet.size} of ${PHRASES.length} phrases known`}
+          showPercentage={false}
+          tone="green"
+        />
       </div>
 
       {speechNotice && (
-        <p className="rounded-xl border border-warm-border bg-ochre-soft px-4 py-2.5 text-xs font-medium text-charcoal">
+        <p role="status" className="text-sm text-charcoal-muted">
           {speechNotice}
         </p>
       )}
@@ -146,38 +121,31 @@ export function PhrasebookPage() {
           No phrases match your current filter.
         </Card>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2">
-          {filteredPhrases.map((phrase) => {
-            const isKnown = knownSet.has(phrase.id);
-            const isSpeaking = speakingId === phrase.id;
+        <Card className="py-2 sm:py-4">
+          <ul className="divide-y divide-warm-border/60">
+            {filteredPhrases.map((phrase) => {
+              const isKnown = knownSet.has(phrase.id);
+              const isSpeaking = speakingId === phrase.id;
 
-            return (
-              <Card
-                key={phrase.id}
-                className={cn(
-                  'flex flex-col justify-between gap-6 sm:p-7',
-                  isKnown && 'border-savanna-green/35 bg-savanna-green-soft/25',
-                )}
-              >
-                <div className="space-y-4">
-                  <div className="flex flex-wrap items-start justify-between gap-2">
-                    <Badge tone={CATEGORY_TONES[phrase.category]}>
-                      {phrase.category}
-                    </Badge>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        onClick={() => handleSpeak(phrase.id, phrase.swahili)}
-                        aria-label={`Listen to ${phrase.swahili}`}
-                        className={cn(
-                          'flex size-8 items-center justify-center rounded-lg border border-warm-border transition-colors',
-                          isSpeaking
-                            ? 'border-terracotta bg-terracotta text-cream'
-                            : 'bg-cream text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
+              return (
+                <li key={phrase.id} className="flex items-start gap-3 py-5">
+                  <details className="min-w-0 flex-1">
+                    <summary className="cursor-pointer list-none rounded-lg [&::-webkit-details-marker]:hidden">
+                      <h2 className="flex items-center gap-2 text-lg font-semibold leading-snug text-charcoal">
+                        {phrase.swahili}
+                        {isKnown && (
+                          <CheckCircle2
+                            className="size-4 shrink-0 text-savanna-green"
+                            aria-label="Known"
+                          />
                         )}
-                      >
-                        <Volume2 className="size-4" aria-hidden="true" />
-                      </button>
+                      </h2>
+                      <p className="mt-1 text-sm text-charcoal-muted">{phrase.english}</p>
+                    </summary>
+
+                    <div className="space-y-3 pt-4 text-sm leading-relaxed text-charcoal-muted">
+                      <p className="italic">{phrase.pronunciation}</p>
+                      <p>“{phrase.example}”</p>
                       <button
                         type="button"
                         onClick={() => toggleKnown(phrase.id)}
@@ -187,44 +155,31 @@ export function PhrasebookPage() {
                             ? `Mark ${phrase.swahili} as unknown`
                             : `Mark ${phrase.swahili} as known`
                         }
-                        className={cn(
-                          'inline-flex items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-medium transition-colors',
-                          isKnown
-                            ? 'border-savanna-green/30 bg-savanna-green-soft text-savanna-green'
-                            : 'border-warm-border bg-surface text-charcoal-muted hover:bg-cream-dark',
-                        )}
+                        className="rounded-md text-xs font-medium text-savanna-green underline decoration-savanna-green/30 underline-offset-4 hover:decoration-savanna-green"
                       >
-                        {isKnown ? (
-                          <CheckCircle2 className="size-3.5" aria-hidden="true" />
-                        ) : (
-                          <Circle className="size-3.5" aria-hidden="true" />
-                        )}
-                        <span>{isKnown ? 'Known' : 'Learn'}</span>
+                        {isKnown ? 'Mark as still learning' : 'Mark as known'}
                       </button>
                     </div>
-                  </div>
+                  </details>
 
-                  <div>
-                    <h2 className="text-xl font-semibold leading-snug text-charcoal">
-                      {phrase.swahili}
-                    </h2>
-                    <p className="text-sm font-medium text-terracotta">
-                      {phrase.english}
-                    </p>
-                    <p className="mt-0.5 text-xs text-charcoal-muted">
-                      Pronunciation: <span className="italic">{phrase.pronunciation}</span>
-                    </p>
-                  </div>
-                </div>
-
-                <p className="rounded-2xl bg-cream p-4 text-xs leading-relaxed text-charcoal-muted">
-                  <span className="font-semibold text-charcoal">Example:</span>{' '}
-                  {phrase.example}
-                </p>
-              </Card>
-            );
-          })}
-        </div>
+                  <button
+                    type="button"
+                    onClick={() => handleSpeak(phrase.id, phrase.swahili)}
+                    aria-label={`Listen to ${phrase.swahili}`}
+                    className={cn(
+                      'flex size-10 shrink-0 items-center justify-center rounded-full transition-colors',
+                      isSpeaking
+                        ? 'bg-terracotta text-cream'
+                        : 'text-charcoal-muted hover:bg-cream-dark/60 hover:text-charcoal',
+                    )}
+                  >
+                    <Volume2 className="size-4" aria-hidden="true" />
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
       )}
     </div>
   );
