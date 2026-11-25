@@ -5,7 +5,7 @@
   --font-serif: "Fraunces", Georgia, serif;
   --color-cream: #FAF6F0;
   --color-cream-dark: #F1E9DD;
-  --color-surface: #FFFDF9;
+  --color-surface: #FFFCF6;
   --color-savanna-green: #1B4332;
   --color-savanna-green-hover: #2D6A4F;
   --color-savanna-green-soft: #E6EFEA;
@@ -17,6 +17,23 @@
   --color-charcoal: #2A211B;
   --color-charcoal-muted: #61554C;
   --color-warm-border: #E5DDD2;
+  --radius-card: 1.25rem;
+  --shadow-soft: 0 1px 12px rgba(42, 33, 27, 0.03);
+}
+
+/* In the components layer so utility classes passed to <Card> can override these */
+@layer components {
+  .boma-card {
+    border: 1px solid --alpha(var(--color-warm-border) / 70%);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface);
+    box-shadow: var(--shadow-soft);
+    padding: --spacing(6);
+
+    @variant sm {
+      padding: --spacing(8);
+    }
+  }
 }
 
 @layer base {

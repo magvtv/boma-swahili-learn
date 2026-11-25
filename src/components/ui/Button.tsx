@@ -1,7 +1,13 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '../../utils/cn';
 
-type ButtonVariant = 'primary' | 'terracotta' | 'secondary' | 'outline' | 'ghost';
+type ButtonVariant =
+  | 'primary'
+  | 'terracotta'
+  | 'secondary'
+  | 'outline'
+  | 'ghost'
+  | 'inverse';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -22,12 +28,14 @@ const VARIANT_STYLES: Record<ButtonVariant, string> = {
     'border border-warm-border bg-surface text-charcoal hover:bg-cream-dark',
   ghost:
     'bg-transparent text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
+  // Quiet action on dark green surfaces
+  inverse: 'bg-transparent text-cream hover:bg-cream/10',
 };
 
 const SIZE_STYLES: Record<ButtonSize, string> = {
-  sm: 'h-8 px-3.5 text-xs gap-1.5 rounded-xl',
-  md: 'h-10 px-4.5 text-sm gap-2 rounded-xl',
-  lg: 'h-12 px-5.5 text-base gap-2.5 rounded-2xl',
+  sm: 'h-9 px-4 text-xs gap-2 rounded-xl',
+  md: 'h-11 px-5 text-sm gap-2 rounded-xl',
+  lg: 'h-12 px-6 text-base gap-2.5 rounded-2xl',
 };
 
 export function Button({

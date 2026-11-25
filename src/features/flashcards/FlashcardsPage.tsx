@@ -9,7 +9,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Badge, Button, Card, ProgressBar } from '../../components/ui';
+import { Badge, Button, Card, PageHeader, ProgressBar } from '../../components/ui';
 import {
   PHRASES,
   PHRASE_CATEGORIES,
@@ -100,65 +100,50 @@ export function FlashcardsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-1">
+    <div className="space-y-10">
+      <PageHeader
+        tone="terracotta"
+        icon={<Layers className="size-5" aria-hidden="true" />}
+        eyebrow="Kadi za Maneno"
+        title="Culinary Flashcards"
+        description="Tap a card to flip between Kiswahili and English, then mark what you know."
+        action={
           <div className="flex items-center gap-2">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-terracotta-soft text-terracotta">
-              <Layers className="size-5" aria-hidden="true" />
-            </span>
-            <div>
-              <p className="text-xs font-semibold tracking-wider text-terracotta uppercase">
-                Kadi za Maneno
-              </p>
-              <h1 className="text-2xl font-bold tracking-tight text-charcoal">
-                Culinary Flashcards
-              </h1>
-            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setShuffleSeed((s) => s + 1);
+                setCurrentIndex(0);
+                setFlipped(false);
+              }}
+              leftIcon={<Shuffle className="size-4" aria-hidden="true" />}
+            >
+              Shuffle
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                resetProgress();
+                setCurrentIndex(0);
+                setFlipped(false);
+              }}
+              leftIcon={<RotateCcw className="size-4" aria-hidden="true" />}
+            >
+              Reset
+            </Button>
           </div>
-          <p className="text-sm text-charcoal-muted">
-            Tap a card to flip between Kiswahili and English, then mark what you know.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              setShuffleSeed((s) => s + 1);
-              setCurrentIndex(0);
-              setFlipped(false);
-            }}
-            leftIcon={<Shuffle className="size-4" aria-hidden="true" />}
-          >
-            Shuffle
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => {
-              resetProgress();
-              setCurrentIndex(0);
-              setFlipped(false);
-            }}
-            leftIcon={<RotateCcw className="size-4" aria-hidden="true" />}
-          >
-            Reset
-          </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Progress */}
-      <Card className="p-4 sm:p-5">
-        <ProgressBar
-          value={knownSet.size}
-          max={PHRASES.length}
-          label={`Overall Mastery (${knownSet.size} of ${PHRASES.length} cards known)`}
-          tone="terracotta"
-        />
-      </Card>
+      <ProgressBar
+        value={knownSet.size}
+        max={PHRASES.length}
+        label={`Overall Mastery (${knownSet.size} of ${PHRASES.length} cards known)`}
+        tone="terracotta"
+      />
 
       {/* Category & Unknown Filters */}
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -176,10 +161,10 @@ export function FlashcardsPage() {
                 onClick={() => handleSelectCategory(category)}
                 aria-pressed={active}
                 className={cn(
-                  'rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors',
+                  'rounded-full border px-4 py-2 text-xs font-medium transition-colors',
                   active
                     ? 'border-savanna-green bg-savanna-green text-cream'
-                    : 'border-warm-border bg-surface text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
+                    : 'border-warm-border/70 bg-surface text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
                 )}
               >
                 {category}
@@ -197,10 +182,10 @@ export function FlashcardsPage() {
           }}
           aria-pressed={unknownOnly}
           className={cn(
-            'rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors',
+            'rounded-full border px-4 py-2 text-xs font-medium transition-colors',
             unknownOnly
               ? 'border-terracotta bg-terracotta-soft text-terracotta-hover'
-              : 'border-warm-border bg-surface text-charcoal-muted hover:bg-cream-dark',
+              : 'border-warm-border/70 bg-surface text-charcoal-muted hover:bg-cream-dark',
           )}
         >
           Review Unknown Only
@@ -215,7 +200,7 @@ export function FlashcardsPage() {
 
       {/* Flashcard Stage */}
       {!activeCard ? (
-        <Card className="py-12 text-center space-y-3">
+        <Card className="space-y-3 py-16 text-center">
           <p className="text-base font-semibold text-charcoal">
             Hongera! No unknown cards left in this filter.
           </p>
@@ -236,7 +221,7 @@ export function FlashcardsPage() {
           </div>
         </Card>
       ) : (
-        <div className="mx-auto max-w-xl space-y-5">
+        <div className="mx-auto max-w-2xl space-y-6">
           <div className="flex items-center justify-between text-xs font-medium text-charcoal-muted">
             <span>
               Card {safeIndex + 1} of {deck.length}
@@ -260,10 +245,10 @@ export function FlashcardsPage() {
                 }
               }}
               data-flipped={flipped}
-              className="boma-card-flipper min-h-72 cursor-pointer rounded-3xl focus-visible:outline-2 focus-visible:outline-terracotta"
+              className="boma-card-flipper min-h-80 cursor-pointer rounded-card focus-visible:outline-2 focus-visible:outline-terracotta"
             >
               {/* Front Face (Swahili) */}
-              <div className="boma-card-face absolute inset-0 flex flex-col justify-between rounded-3xl border border-warm-border bg-surface p-6 shadow-sm sm:p-8">
+              <div className="boma-card-face absolute inset-0 flex flex-col justify-between rounded-card border border-warm-border/70 bg-surface p-7 shadow-soft sm:p-10">
                 <div className="flex items-center justify-between gap-2">
                   <Badge tone="terracotta">{activeCard.category}</Badge>
                   <button
@@ -283,7 +268,7 @@ export function FlashcardsPage() {
                   <p className="text-xs font-semibold tracking-wider text-charcoal-muted uppercase">
                     Kiswahili
                   </p>
-                  <p className="text-2xl font-bold text-charcoal sm:text-3xl">
+                  <p className="font-serif text-3xl font-semibold leading-snug text-charcoal sm:text-4xl">
                     {activeCard.swahili}
                   </p>
                   <p className="text-xs italic text-charcoal-muted">
@@ -297,7 +282,7 @@ export function FlashcardsPage() {
               </div>
 
               {/* Back Face (English + Example) */}
-              <div className="boma-card-face boma-card-face-back absolute inset-0 flex flex-col justify-between rounded-3xl border border-savanna-green/30 bg-savanna-green p-6 text-cream shadow-sm sm:p-8">
+              <div className="boma-card-face boma-card-face-back absolute inset-0 flex flex-col justify-between rounded-card border border-savanna-green/30 bg-savanna-green p-7 text-cream shadow-soft sm:p-10">
                 <div className="flex items-center justify-between gap-2">
                   <span className="rounded-full bg-cream/15 px-2.5 py-0.5 text-xs font-medium text-cream">
                     English Meaning

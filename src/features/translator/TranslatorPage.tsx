@@ -10,7 +10,7 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { Badge, Button, Card } from '../../components/ui';
+import { Badge, Button, Card, PageHeader } from '../../components/ui';
 import {
   clearRecentTranslations,
   getRecentTranslations,
@@ -146,31 +146,14 @@ export function TranslatorPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-savanna-green-soft text-savanna-green">
-              <Languages className="size-5" aria-hidden="true" />
-            </span>
-            <div>
-              <p className="text-xs font-semibold tracking-wider text-terracotta uppercase">
-                Mtafsiri
-              </p>
-              <h1 className="text-2xl font-bold tracking-tight text-charcoal">
-                English ↔ Kiswahili Translator
-              </h1>
-            </div>
-          </div>
-          <p className="text-sm text-charcoal-muted">
-            Translate everyday phrases, culinary terms, and travel expressions. Recent
-            translations are cached locally for instant offline recall.
-          </p>
-        </div>
-
-        <Badge tone="green">MyMemory API</Badge>
-      </div>
+    <div className="space-y-10">
+      <PageHeader
+        icon={<Languages className="size-5" aria-hidden="true" />}
+        eyebrow="Mtafsiri"
+        title="English ↔ Kiswahili Translator"
+        description="Translate everyday phrases, culinary terms, and travel expressions. Recent translations are cached locally for instant offline recall."
+        action={<Badge tone="green">MyMemory API</Badge>}
+      />
 
       {/* Quick sample chips */}
       <div className="flex flex-wrap items-center gap-2">
@@ -186,7 +169,7 @@ export function TranslatorPage() {
               setSourceText(sample.text);
               void runTranslation(sample.text, sample.from, nextTo);
             }}
-            className="rounded-full border border-warm-border bg-surface px-3 py-1 text-xs font-medium text-charcoal transition-colors hover:border-terracotta/50 hover:bg-terracotta-soft"
+            className="rounded-full border border-warm-border/70 bg-surface px-4 py-2 text-xs font-medium text-charcoal transition-colors hover:border-terracotta/50 hover:bg-terracotta-soft"
           >
             {sample.label}
           </button>
@@ -194,9 +177,9 @@ export function TranslatorPage() {
       </div>
 
       {/* Translator Workspace */}
-      <Card className="p-4 sm:p-6">
+      <Card className="p-5 sm:p-8">
         {/* Language Bar */}
-        <div className="mb-4 flex items-center justify-between gap-3 rounded-2xl border border-warm-border bg-cream p-2.5 sm:px-4">
+        <div className="mb-6 flex items-center justify-between gap-3 rounded-2xl bg-cream p-4 sm:px-6">
           <div className="flex-1 text-center sm:text-left">
             <span className="text-xs font-medium text-charcoal-muted">From</span>
             <p className="text-sm font-bold text-savanna-green sm:text-base">
@@ -223,9 +206,9 @@ export function TranslatorPage() {
         </div>
 
         {/* Source & Target Text Areas */}
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid gap-5 lg:grid-cols-2">
           {/* Source Panel */}
-          <div className="flex flex-col rounded-2xl border border-warm-border bg-cream/40 p-3.5 focus-within:border-savanna-green">
+          <div className="flex flex-col rounded-2xl border border-warm-border/70 bg-cream/40 p-5 focus-within:border-savanna-green">
             <div className="mb-2 flex items-center justify-between">
               <label
                 htmlFor={sourceId}
@@ -266,7 +249,7 @@ export function TranslatorPage() {
               className="w-full flex-1 resize-none bg-transparent text-sm leading-relaxed text-charcoal placeholder:text-charcoal-muted/60 focus:outline-none sm:text-base"
             />
 
-            <div className="mt-3 flex items-center justify-between gap-3 border-t border-warm-border pt-3">
+            <div className="mt-4 flex items-center justify-between gap-3 border-t border-warm-border/70 pt-4">
               <span className="text-xs tabular-nums text-charcoal-muted">
                 {sourceText.length} / {MAX_CHARS}
               </span>
@@ -289,7 +272,7 @@ export function TranslatorPage() {
           </div>
 
           {/* Target Panel */}
-          <div className="flex flex-col rounded-2xl border border-warm-border bg-surface p-3.5">
+          <div className="flex flex-col rounded-2xl border border-warm-border/70 bg-surface p-5">
             <div className="mb-2 flex items-center justify-between gap-2">
               <label
                 htmlFor={targetId}
@@ -317,7 +300,7 @@ export function TranslatorPage() {
               className="w-full flex-1 resize-none bg-transparent text-sm leading-relaxed text-charcoal placeholder:text-charcoal-muted/60 focus:outline-none sm:text-base"
             />
 
-            <div className="mt-3 flex items-center justify-between gap-3 border-t border-warm-border pt-3">
+            <div className="mt-4 flex items-center justify-between gap-3 border-t border-warm-border/70 pt-4">
               <span className="text-xs text-charcoal-muted">
                 {isLoading ? 'Fetching translation...' : 'Ctrl/Cmd + Enter to translate'}
               </span>
@@ -353,11 +336,11 @@ export function TranslatorPage() {
       </Card>
 
       {/* Recent Cached Translations */}
-      <section aria-labelledby="recent-heading" className="space-y-3">
+      <section aria-labelledby="recent-heading" className="space-y-5">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <Clock className="size-4 text-charcoal-muted" aria-hidden="true" />
-            <h2 id="recent-heading" className="text-base font-bold text-charcoal">
+            <h2 id="recent-heading" className="text-xl font-semibold leading-snug text-charcoal">
               Recent Translations
             </h2>
           </div>
@@ -375,17 +358,17 @@ export function TranslatorPage() {
         </div>
 
         {history.length === 0 ? (
-          <Card className="py-6 text-center text-sm text-charcoal-muted">
+          <Card className="py-10 text-center text-sm text-charcoal-muted">
             No cached translations yet. Translate a phrase above to save it here.
           </Card>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             {history.map((entry) => (
               <button
                 key={entry.id}
                 type="button"
                 onClick={() => handleRestoreEntry(entry)}
-                className="group rounded-2xl border border-warm-border bg-surface p-4 text-left transition-colors hover:border-terracotta/40 hover:bg-cream/60"
+                className="group rounded-card border border-warm-border/70 bg-surface p-6 text-left transition-colors hover:border-terracotta/40 hover:bg-cream/60"
               >
                 <div className="mb-1.5 flex items-center justify-between gap-2">
                   <Badge tone="neutral">

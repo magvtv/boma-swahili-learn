@@ -1,8 +1,7 @@
-import { ArrowRight, BookOpen, Languages, Sparkles } from 'lucide-react';
+import { ArrowRight, BookOpen, Languages } from 'lucide-react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Badge,
   Button,
   Card,
   FeatureIcon,
@@ -22,59 +21,53 @@ export function DashboardPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="space-y-9">
-      {/* Asymmetric Editorial Hero */}
-      <section className="grid gap-5 lg:grid-cols-12">
-        <div className="flex flex-col justify-between rounded-3xl border border-warm-border bg-savanna-green p-6 text-cream shadow-[0_6px_24px_rgba(27,67,50,0.12)] sm:p-8 lg:col-span-8">
-          <div className="space-y-3.5">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-cream/20 bg-cream/10 px-3 py-1 text-xs font-medium text-cream">
-              <Sparkles className="size-3.5" aria-hidden="true" />
-              <span>Karibu Boma Language Lab</span>
-            </div>
-            <h1 className="text-[clamp(1.75rem,1.2rem+2vw,2.5rem)] font-semibold leading-tight tracking-tight">
-              Learn Kiswahili like you’re sharing a meal
-            </h1>
-            <p className="max-w-xl text-sm leading-relaxed text-cream/85 sm:text-base">
-              Pick up the words Kenyans actually use in kitchens, markets, and around
-              the table—one unhurried phrase at a time.
-            </p>
-          </div>
+    <div className="space-y-16">
+      {/* Editorial Hero */}
+      <div className="space-y-6">
+        <section className="rounded-card bg-savanna-green px-7 py-12 text-cream shadow-soft sm:px-12 sm:py-16 lg:px-14 lg:py-20">
+          <p className="text-sm font-medium text-cream/75">Karibu Boma Language Lab</p>
+          <h1 className="mt-5 max-w-2xl text-[clamp(2.125rem,1.4rem+2.6vw,3.25rem)] font-semibold leading-[1.12] tracking-tight text-balance">
+            Learn Kiswahili like you’re sharing a meal
+          </h1>
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-cream/85 sm:text-lg">
+            Pick up the words Kenyans actually use in kitchens, markets, and around
+            the table—one unhurried phrase at a time.
+          </p>
 
-          <div className="mt-6 flex flex-wrap items-center gap-3">
+          <div className="mt-10 flex flex-wrap items-center gap-3">
             <Button
               variant="terracotta"
-              size="md"
+              size="lg"
               leftIcon={<Languages className="size-4" aria-hidden="true" />}
               onClick={() => navigate('/translator')}
             >
               Open Translator
             </Button>
             <Button
-              variant="secondary"
-              size="md"
-              leftIcon={<BookOpen className="size-4 text-terracotta" aria-hidden="true" />}
+              variant="inverse"
+              size="lg"
+              leftIcon={<BookOpen className="size-4" aria-hidden="true" />}
               onClick={() => setTipOpen(true)}
             >
               Today’s Table Note
             </Button>
           </div>
-        </div>
+        </section>
 
-        <Card className="flex flex-col justify-between gap-5 bg-cream-dark/55 p-6 lg:col-span-4">
-          <div className="space-y-2">
-            <p className="text-xs font-semibold tracking-wider text-terracotta uppercase">
-              Daily Rhythm
-            </p>
-            <h2 className="text-lg font-bold text-charcoal">
+        {/* Daily rhythm: a quiet strip below the hero */}
+        <Card className="grid gap-6 bg-cream-dark/40 shadow-none md:grid-cols-2 md:items-center md:gap-12">
+          <div>
+            <p className="text-sm font-medium text-terracotta">Daily rhythm</p>
+            <h2 className="mt-2 text-xl font-semibold leading-snug text-charcoal">
               12 of 20 minutes today
             </h2>
-            <p className="text-xs leading-relaxed text-charcoal-muted">
+            <p className="mt-2 text-sm leading-relaxed text-charcoal-muted">
               A short session with flashcards or a quick 5-question quiz keeps words
               fresh without feeling like homework.
             </p>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             <ProgressBar
               value={12}
               max={20}
@@ -82,76 +75,62 @@ export function DashboardPage() {
               showPercentage={true}
               label="Today’s goal"
             />
-            <p className="border-t border-warm-border pt-3 text-xs italic text-charcoal-muted">
+            <p className="text-xs italic leading-relaxed text-charcoal-muted">
               “Haraka haraka haina baraka” — Rushing has no blessing.
             </p>
           </div>
         </Card>
-      </section>
+      </div>
 
-      {/* Organic Module Grid */}
-      <section aria-labelledby="features-heading" className="space-y-4">
-        <div className="flex flex-wrap items-baseline justify-between gap-2">
-          <div>
-            <h2
-              id="features-heading"
-              className="text-xl font-bold tracking-tight text-charcoal"
-            >
-              Where would you like to start?
-            </h2>
-            <p className="text-sm text-charcoal-muted">
-              Every module shares the same culinary vocabulary so what you read shows up
-              in your quizzes.
-            </p>
-          </div>
+      {/* Module Grid */}
+      <section aria-labelledby="features-heading" className="space-y-8">
+        <div className="max-w-xl">
+          <h2
+            id="features-heading"
+            className="text-2xl font-semibold leading-snug tracking-tight text-charcoal sm:text-3xl"
+          >
+            Where would you like to start?
+          </h2>
+          <p className="mt-2 text-base leading-relaxed text-charcoal-muted">
+            Every module shares the same culinary vocabulary so what you read shows up
+            in your quizzes.
+          </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-12">
-          {FEATURES.map((feature, index) => {
-            const isLeadCard = index < 2;
-            return (
-              <Link
-                key={feature.id}
-                to={feature.path}
-                className={`group block rounded-2xl focus-visible:outline-none ${
-                  isLeadCard ? 'lg:col-span-6' : 'lg:col-span-3 sm:col-span-1'
-                }`}
-              >
-                <Card className="flex h-full flex-col justify-between transition-all duration-200 group-hover:border-terracotta/45 group-hover:bg-surface group-hover:shadow-[0_6px_20px_rgba(42,33,27,0.08)]">
-                  <div>
-                    <div className="flex items-start justify-between gap-3">
-                      <span
-                        className={`flex size-10 items-center justify-center rounded-xl ${TONE_ACCENTS[feature.tone]}`}
-                      >
-                        <FeatureIcon id={feature.id} className="size-5" />
-                      </span>
-                      <Badge tone={feature.tone}>{feature.badge}</Badge>
-                    </div>
+        <div className="grid gap-6 sm:grid-cols-2">
+          {FEATURES.map((feature) => (
+            <Link
+              key={feature.id}
+              to={feature.path}
+              className="group block rounded-card"
+            >
+              <Card className="flex h-full flex-col transition-all duration-200 group-hover:border-terracotta/40 group-hover:shadow-[0_6px_24px_rgba(42,33,27,0.06)]">
+                <span
+                  className={`flex size-11 items-center justify-center rounded-2xl ${TONE_ACCENTS[feature.tone]}`}
+                >
+                  <FeatureIcon id={feature.id} className="size-5" />
+                </span>
 
-                    <div className="mt-4 space-y-1.5">
-                      <p className="text-[11px] font-semibold tracking-wider text-terracotta uppercase">
-                        {feature.swahiliTitle}
-                      </p>
-                      <h3 className="text-base font-bold text-charcoal group-hover:text-savanna-green">
-                        {feature.title}
-                      </h3>
-                      <p className="text-sm leading-relaxed text-charcoal-muted">
-                        {feature.description}
-                      </p>
-                    </div>
-                  </div>
+                <p className="mt-6 text-xs font-medium text-terracotta">
+                  {feature.swahiliTitle}
+                </p>
+                <h3 className="mt-1 text-xl font-semibold leading-snug text-charcoal group-hover:text-savanna-green">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-charcoal-muted">
+                  {feature.description}
+                </p>
 
-                  <div className="mt-5 flex items-center gap-1.5 text-sm font-semibold text-savanna-green group-hover:text-terracotta">
-                    <span>Open {feature.title}</span>
-                    <ArrowRight
-                      className="size-4 transition-transform duration-150 group-hover:translate-x-0.5"
-                      aria-hidden="true"
-                    />
-                  </div>
-                </Card>
-              </Link>
-            );
-          })}
+                <div className="mt-6 flex items-center gap-1.5 text-sm font-medium text-savanna-green group-hover:text-terracotta">
+                  <span>Open {feature.title}</span>
+                  <ArrowRight
+                    className="size-4 transition-transform duration-150 group-hover:translate-x-0.5"
+                    aria-hidden="true"
+                  />
+                </div>
+              </Card>
+            </Link>
+          ))}
         </div>
       </section>
 

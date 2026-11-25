@@ -5,4 +5,5 @@ export { FeatureIcon } from './FeatureIcon';
 export { FeaturePlaceholder } from './FeaturePlaceholder';
 export { Input } from './Input';
 export { Modal } from './Modal';
+export { PageHeader } from './PageHeader';
 export { ProgressBar } from './ProgressBar';

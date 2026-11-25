@@ -1,7 +1,14 @@
 import { BookOpen, CheckCircle2, Circle, Layers, Search, Volume2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Badge, Button, Card, Input, ProgressBar } from '../../components/ui';
+import {
+  Badge,
+  Button,
+  Card,
+  Input,
+  PageHeader,
+  ProgressBar,
+} from '../../components/ui';
 import {
   PHRASES,
   PHRASE_CATEGORIES,
@@ -56,52 +63,36 @@ export function PhrasebookPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-terracotta-soft text-terracotta">
-              <BookOpen className="size-5" aria-hidden="true" />
-            </span>
-            <div>
-              <p className="text-xs font-semibold tracking-wider text-terracotta uppercase">
-                Kitabu cha Misemo
-              </p>
-              <h1 className="text-2xl font-bold tracking-tight text-charcoal">
-                Culinary Phrasebook
-              </h1>
-            </div>
-          </div>
-          <p className="text-sm text-charcoal-muted">
-            Essential Kenyan kitchen tools, ingredients, cooking actions, and table
-            expressions.
-          </p>
-        </div>
-
-        <Link to="/flashcards">
-          <Button
-            variant="primary"
-            size="sm"
-            leftIcon={<Layers className="size-4" aria-hidden="true" />}
-          >
-            Practice Flashcards
-          </Button>
-        </Link>
-      </div>
+    <div className="space-y-10">
+      <PageHeader
+        tone="terracotta"
+        icon={<BookOpen className="size-5" aria-hidden="true" />}
+        eyebrow="Kitabu cha Misemo"
+        title="Culinary Phrasebook"
+        description="Essential Kenyan kitchen tools, ingredients, cooking actions, and table expressions."
+        action={
+          <Link to="/flashcards">
+            <Button
+              variant="primary"
+              size="sm"
+              leftIcon={<Layers className="size-4" aria-hidden="true" />}
+            >
+              Practice Flashcards
+            </Button>
+          </Link>
+        }
+      />
 
       {/* Mastery Progress */}
-      <Card className="p-4 sm:p-5">
-        <ProgressBar
-          value={knownSet.size}
-          max={PHRASES.length}
-          label={`Phrasebook Mastery (${knownSet.size} of ${PHRASES.length} known)`}
-          tone="green"
-        />
-      </Card>
+      <ProgressBar
+        value={knownSet.size}
+        max={PHRASES.length}
+        label={`Phrasebook Mastery (${knownSet.size} of ${PHRASES.length} known)`}
+        tone="green"
+      />
 
       {/* Filters & Search */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div
           className="flex flex-wrap gap-2"
           role="group"
@@ -116,10 +107,10 @@ export function PhrasebookPage() {
                 onClick={() => setSelectedCategory(category)}
                 aria-pressed={active}
                 className={cn(
-                  'rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors',
+                  'rounded-full border px-4 py-2 text-xs font-medium transition-colors',
                   active
                     ? 'border-savanna-green bg-savanna-green text-cream'
-                    : 'border-warm-border bg-surface text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
+                    : 'border-warm-border/70 bg-surface text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
                 )}
               >
                 {category}
@@ -128,7 +119,7 @@ export function PhrasebookPage() {
           })}
         </div>
 
-        <div className="w-full sm:w-64">
+        <div className="w-full sm:w-72 xl:w-64">
           <Input
             type="search"
             aria-label="Filter phrases"
@@ -151,11 +142,11 @@ export function PhrasebookPage() {
 
       {/* Phrase List */}
       {filteredPhrases.length === 0 ? (
-        <Card className="py-10 text-center text-sm text-charcoal-muted">
+        <Card className="py-16 text-center text-sm text-charcoal-muted">
           No phrases match your current filter.
         </Card>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2">
           {filteredPhrases.map((phrase) => {
             const isKnown = knownSet.has(phrase.id);
             const isSpeaking = speakingId === phrase.id;
@@ -164,12 +155,12 @@ export function PhrasebookPage() {
               <Card
                 key={phrase.id}
                 className={cn(
-                  'flex flex-col justify-between gap-4 transition-colors',
+                  'flex flex-col justify-between gap-6 sm:p-7',
                   isKnown && 'border-savanna-green/35 bg-savanna-green-soft/25',
                 )}
               >
-                <div className="space-y-2.5">
-                  <div className="flex items-start justify-between gap-2">
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
                     <Badge tone={CATEGORY_TONES[phrase.category]}>
                       {phrase.category}
                     </Badge>
@@ -214,7 +205,7 @@ export function PhrasebookPage() {
                   </div>
 
                   <div>
-                    <h2 className="text-lg font-bold text-charcoal">
+                    <h2 className="text-xl font-semibold leading-snug text-charcoal">
                       {phrase.swahili}
                     </h2>
                     <p className="text-sm font-medium text-terracotta">
@@ -226,7 +217,7 @@ export function PhrasebookPage() {
                   </div>
                 </div>
 
-                <p className="rounded-xl bg-cream px-3 py-2 text-xs leading-relaxed text-charcoal-muted">
+                <p className="rounded-2xl bg-cream p-4 text-xs leading-relaxed text-charcoal-muted">
                   <span className="font-semibold text-charcoal">Example:</span>{' '}
                   {phrase.example}
                 </p>

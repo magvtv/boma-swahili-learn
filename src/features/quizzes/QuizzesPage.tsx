@@ -9,7 +9,14 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Badge, Button, Card, Input, ProgressBar } from '../../components/ui';
+import {
+  Badge,
+  Button,
+  Card,
+  Input,
+  PageHeader,
+  ProgressBar,
+} from '../../components/ui';
 import { PHRASE_CATEGORIES, type PhraseCategory } from '../../data/phrases';
 import { cn } from '../../utils/cn';
 import { speakSwahili } from '../../utils/speech';
@@ -140,40 +147,29 @@ export function QuizzesPage() {
   const correctCount = answers.filter((a) => a.isCorrect).length;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-ochre-soft text-charcoal">
-              <ClipboardCheck className="size-5" aria-hidden="true" />
-            </span>
-            <div>
-              <p className="text-xs font-semibold tracking-wider text-terracotta uppercase">
-                Majaribio
-              </p>
-              <h1 className="text-2xl font-bold tracking-tight text-charcoal">
-                Culinary Swahili Quizzes
-              </h1>
-            </div>
-          </div>
-          <p className="text-sm text-charcoal-muted">
-            Test your culinary vocabulary with multiple-choice and typed translation
-            challenges.
-          </p>
-        </div>
-
-        <Badge tone="ochre">
-          Best: {highScores.bestPercentage}% ({highScores.bestScore} pts)
-        </Badge>
-      </div>
+    <div className="space-y-10">
+      <PageHeader
+        tone="ochre"
+        icon={<ClipboardCheck className="size-5" aria-hidden="true" />}
+        eyebrow="Majaribio"
+        title="Culinary Swahili Quizzes"
+        description="Test your culinary vocabulary with multiple-choice and typed translation challenges."
+        action={
+          // The setup stage already shows records in its own panel
+          stage !== 'setup' && (
+            <Badge tone="ochre">
+              Best: {highScores.bestPercentage}% ({highScores.bestScore} pts)
+            </Badge>
+          )
+        }
+      />
 
       {/* Setup Stage */}
       {stage === 'setup' && (
-        <div className="grid gap-6 lg:grid-cols-3">
-          <Card className="space-y-6 p-6 lg:col-span-2">
-            <div className="space-y-2">
-              <h2 className="text-sm font-semibold text-charcoal">
+        <div className="grid gap-8 lg:grid-cols-3">
+          <Card className="space-y-10 sm:p-10 lg:col-span-2">
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold leading-snug text-charcoal">
                 1. Choose Category
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -186,10 +182,10 @@ export function QuizzesPage() {
                       onClick={() => setCategory(cat)}
                       aria-pressed={active}
                       className={cn(
-                        'rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors',
+                        'rounded-full border px-4 py-2 text-xs font-medium transition-colors',
                         active
                           ? 'border-savanna-green bg-savanna-green text-cream'
-                          : 'border-warm-border bg-surface text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
+                          : 'border-warm-border/70 bg-surface text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
                       )}
                     >
                       {cat}
@@ -199,11 +195,11 @@ export function QuizzesPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h2 className="text-sm font-semibold text-charcoal">
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold leading-snug text-charcoal">
                 2. Question Format
               </h2>
-              <div className="grid gap-2.5 sm:grid-cols-3">
+              <div className="grid gap-3 sm:grid-cols-3">
                 {(['mixed', 'multiple-choice', 'type-translation'] as const).map(
                   (itemMode) => {
                     const active = mode === itemMode;
@@ -214,10 +210,10 @@ export function QuizzesPage() {
                         onClick={() => setMode(itemMode)}
                         aria-pressed={active}
                         className={cn(
-                          'rounded-xl border px-3.5 py-2.5 text-left text-xs font-medium transition-colors',
+                          'rounded-2xl border p-4 text-left text-xs font-medium leading-relaxed transition-colors',
                           active
                             ? 'border-terracotta bg-terracotta-soft text-terracotta-hover'
-                            : 'border-warm-border bg-cream/50 text-charcoal-muted hover:bg-cream-dark',
+                            : 'border-warm-border/70 bg-cream/50 text-charcoal-muted hover:bg-cream-dark',
                         )}
                       >
                         {MODE_LABELS[itemMode]}
@@ -228,11 +224,11 @@ export function QuizzesPage() {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h2 className="text-sm font-semibold text-charcoal">
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold leading-snug text-charcoal">
                 3. Number of Questions
               </h2>
-              <div className="flex gap-2.5">
+              <div className="flex flex-wrap gap-3">
                 {[5, 10].map((count) => {
                   const active = questionCount === count;
                   return (
@@ -242,10 +238,10 @@ export function QuizzesPage() {
                       onClick={() => setQuestionCount(count)}
                       aria-pressed={active}
                       className={cn(
-                        'rounded-xl border px-4 py-2 text-xs font-semibold transition-colors',
+                        'rounded-xl border px-5 py-3 text-xs font-medium transition-colors',
                         active
                           ? 'border-savanna-green bg-savanna-green-soft text-savanna-green'
-                          : 'border-warm-border bg-surface text-charcoal-muted hover:bg-cream-dark',
+                          : 'border-warm-border/70 bg-surface text-charcoal-muted hover:bg-cream-dark',
                       )}
                     >
                       {count} Questions
@@ -268,21 +264,21 @@ export function QuizzesPage() {
           </Card>
 
           {/* High Score Summary */}
-          <Card className="flex flex-col justify-between space-y-5 bg-cream/60 p-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-savanna-green">
+          <Card className="flex flex-col gap-8 bg-cream-dark/40 shadow-none sm:p-6 lg:self-start">
+            <div className="space-y-6">
+              <div className="flex items-center gap-2.5 text-savanna-green">
                 <Trophy className="size-5" aria-hidden="true" />
-                <h2 className="text-base font-bold text-charcoal">Your Records</h2>
+                <h2 className="text-xl font-semibold leading-snug text-charcoal">Your Records</h2>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-xl border border-warm-border bg-surface p-3.5">
+                <div className="rounded-2xl bg-surface p-3.5">
                   <p className="text-xs text-charcoal-muted">Best Accuracy</p>
                   <p className="mt-1 text-xl font-bold text-savanna-green">
                     {highScores.bestPercentage}%
                   </p>
                 </div>
-                <div className="rounded-xl border border-warm-border bg-surface p-3.5">
+                <div className="rounded-2xl bg-surface p-3.5">
                   <p className="text-xs text-charcoal-muted">Best Score</p>
                   <p className="mt-1 text-xl font-bold text-terracotta">
                     {highScores.bestScore}
@@ -290,7 +286,7 @@ export function QuizzesPage() {
                 </div>
               </div>
 
-              <div className="rounded-xl border border-warm-border bg-surface p-3.5 text-xs text-charcoal-muted">
+              <div className="space-y-2 text-sm text-charcoal-muted">
                 <p>
                   Quizzes completed:{' '}
                   <strong className="text-charcoal">
@@ -298,7 +294,7 @@ export function QuizzesPage() {
                   </strong>
                 </p>
                 {highScores.lastScore !== null && highScores.lastTotal !== null && (
-                  <p className="mt-1">
+                  <p>
                     Last attempt:{' '}
                     <strong className="text-charcoal">
                       {highScores.lastScore} / {highScores.lastTotal}
@@ -317,8 +313,8 @@ export function QuizzesPage() {
 
       {/* Active Quiz Stage */}
       {stage === 'active' && activeQuestion && (
-        <div className="mx-auto max-w-2xl space-y-5">
-          <Card className="p-4 sm:p-5">
+        <div className="mx-auto max-w-2xl space-y-6">
+          <div className="px-1">
             <div className="mb-2 flex items-center justify-between text-xs font-medium text-charcoal-muted">
               <span>
                 Question {currentIdx + 1} of {questions.length}
@@ -333,16 +329,16 @@ export function QuizzesPage() {
               showPercentage={false}
               tone="green"
             />
-          </Card>
+          </div>
 
-          <Card className="space-y-6 p-6 sm:p-8">
+          <Card className="space-y-8 sm:p-10">
             <div className="flex items-start justify-between gap-3">
-              <div className="space-y-1.5">
+              <div className="space-y-3">
                 <Badge tone="neutral">{activeQuestion.phrase.category}</Badge>
                 <p className="text-xs font-medium text-charcoal-muted">
                   {activeQuestion.promptLabel}
                 </p>
-                <h2 className="text-2xl font-bold text-charcoal">
+                <h2 className="text-2xl font-semibold leading-snug text-charcoal sm:text-3xl">
                   {activeQuestion.promptText}
                 </h2>
               </div>
@@ -359,7 +355,7 @@ export function QuizzesPage() {
 
             {/* Multiple Choice */}
             {activeQuestion.kind === 'multiple-choice' && activeQuestion.options && (
-              <div className="grid gap-2.5 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2">
                 {activeQuestion.options.map((option) => {
                   const isSelected = submittedRecord?.userAnswer === option;
                   const isCorrectOption =
@@ -373,7 +369,7 @@ export function QuizzesPage() {
                       disabled={Boolean(submittedRecord)}
                       onClick={() => handleMultipleChoiceAnswer(option)}
                       className={cn(
-                        'flex items-center justify-between gap-2 rounded-xl border px-4 py-3 text-left text-sm font-medium transition-colors',
+                        'flex items-center justify-between gap-2 rounded-2xl border px-5 py-4 text-left text-sm font-medium transition-colors',
                         !submittedRecord &&
                           'border-warm-border bg-cream/40 text-charcoal hover:border-savanna-green hover:bg-savanna-green-soft/40',
                         submittedRecord &&
@@ -428,10 +424,10 @@ export function QuizzesPage() {
 
             {/* Feedback & Next */}
             {submittedRecord && (
-              <div className="space-y-4 border-t border-warm-border pt-4">
+              <div className="space-y-5 border-t border-warm-border/70 pt-6">
                 <div
                   className={cn(
-                    'flex items-start gap-2.5 rounded-xl px-4 py-3 text-sm',
+                    'flex items-start gap-3 rounded-2xl p-5 text-sm leading-relaxed',
                     submittedRecord.isCorrect
                       ? 'bg-savanna-green-soft text-savanna-green'
                       : 'bg-terracotta-soft text-terracotta-hover',
@@ -476,19 +472,19 @@ export function QuizzesPage() {
 
       {/* Results Stage */}
       {stage === 'results' && (
-        <div className="mx-auto max-w-2xl space-y-6">
+        <div className="mx-auto max-w-2xl space-y-10">
           {(() => {
             const total = questions.length;
             const percentage = total > 0 ? Math.round((correctCount / total) * 100) : 0;
             const feedback = getScoreFeedback(percentage);
 
             return (
-              <Card className="space-y-5 p-6 sm:p-8">
+              <Card className="space-y-8 sm:p-10">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
                       <Award className="size-6 text-terracotta" aria-hidden="true" />
-                      <h2 className="text-xl font-bold text-charcoal">
+                      <h2 className="text-2xl font-semibold leading-snug text-charcoal">
                         {feedback.title}
                       </h2>
                     </div>
@@ -498,7 +494,7 @@ export function QuizzesPage() {
                   {isNewBest && <Badge tone="ochre">New High Score!</Badge>}
                 </div>
 
-                <div className="rounded-2xl bg-cream p-5">
+                <div className="rounded-2xl bg-cream p-6">
                   <div className="mb-3 flex items-baseline justify-between">
                     <span className="text-sm font-medium text-charcoal-muted">
                       Final Score
@@ -537,16 +533,16 @@ export function QuizzesPage() {
           })()}
 
           {/* Answer Review */}
-          <section aria-labelledby="review-heading" className="space-y-3">
-            <h3 id="review-heading" className="text-base font-bold text-charcoal">
+          <section aria-labelledby="review-heading" className="space-y-5">
+            <h3 id="review-heading" className="text-xl font-semibold leading-snug text-charcoal">
               Answer Review
             </h3>
-            <div className="space-y-2.5">
+            <div className="space-y-4">
               {answers.map((record) => (
                 <Card
                   key={record.question.id}
                   className={cn(
-                    'flex items-start justify-between gap-3 p-4',
+                    'flex items-start justify-between gap-4 p-5 sm:p-6',
                     record.isCorrect
                       ? 'border-savanna-green/30'
                       : 'border-terracotta/30',

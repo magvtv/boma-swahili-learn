@@ -93,7 +93,7 @@ export function Modal({
       aria-describedby={description ? descId : undefined}
       closedby={closeOnBackdropClick ? 'any' : 'closerequest'}
       className={cn(
-        'boma-modal m-auto w-[min(32rem,calc(100dvw-2rem))] rounded-2xl border border-warm-border bg-surface p-0 text-charcoal shadow-xl',
+        'boma-modal m-auto w-[min(32rem,calc(100dvw-2rem))] rounded-card border border-warm-border/70 bg-surface p-0 text-charcoal shadow-xl',
         className,
       )}
     >

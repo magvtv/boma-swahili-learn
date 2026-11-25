@@ -51,7 +51,7 @@ export function Input({
           aria-invalid={error ? true : undefined}
           aria-describedby={describedBy}
           className={cn(
-            'h-10 w-full rounded-xl border bg-surface px-3.5 text-sm text-charcoal placeholder:text-charcoal-muted/70 transition-colors duration-150',
+            'h-11 w-full rounded-xl border bg-surface px-3.5 text-sm text-charcoal placeholder:text-charcoal-muted/70 transition-colors duration-150',
             'focus:border-savanna-green focus:outline-none',
             error
               ? 'border-terracotta focus:border-terracotta'

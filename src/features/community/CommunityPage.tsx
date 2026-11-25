@@ -1,6 +1,6 @@
 import { Eye, MessageSquarePlus, Send, Users } from 'lucide-react';
 import { useState } from 'react';
-import { Badge, Button, Card, Input } from '../../components/ui';
+import { Badge, Button, Card, Input, PageHeader } from '../../components/ui';
 
 type CommentTopic = 'Question' | 'Cultural Tip' | 'Recipe Note';
 
@@ -126,49 +126,35 @@ export function CommunityPage() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Header + Visitor Counter */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="flex size-9 items-center justify-center rounded-xl bg-ochre-soft text-charcoal">
-              <Users className="size-5" aria-hidden="true" />
+    <div className="space-y-12">
+      <PageHeader
+        tone="ochre"
+        icon={<Users className="size-5" aria-hidden="true" />}
+        eyebrow="Jamii"
+        title="Learner Community"
+        description="Share Swahili questions, Kenyan culinary notes, and study tips with fellow learners."
+        action={
+          <p className="inline-flex items-center gap-2 text-xs font-medium text-charcoal-muted">
+            <Eye className="size-4 text-savanna-green" aria-hidden="true" />
+            <span className="tabular-nums">
+              {visitorCount.toLocaleString()} learners visited
             </span>
-            <div>
-              <p className="text-xs font-semibold tracking-wider text-terracotta uppercase">
-                Jamii
-              </p>
-              <h1 className="text-2xl font-bold tracking-tight text-charcoal">
-                Learner Community
-              </h1>
-            </div>
-          </div>
-          <p className="text-sm text-charcoal-muted">
-            Share Swahili questions, Kenyan culinary notes, and study tips with fellow
-            learners.
           </p>
-        </div>
+        }
+      />
 
-        <div className="inline-flex items-center gap-2 rounded-full border border-warm-border bg-surface px-3.5 py-1.5 text-xs font-medium text-charcoal shadow-xs">
-          <Eye className="size-4 text-savanna-green" aria-hidden="true" />
-          <span className="tabular-nums">
-            {visitorCount.toLocaleString()} learners visited
-          </span>
-        </div>
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-12">
+      <div className="grid gap-10 lg:grid-cols-12 lg:gap-8">
         {/* Comment Form */}
-        <Card className="h-fit space-y-4 p-5 sm:p-6 lg:col-span-5">
+        <Card className="h-fit space-y-6 lg:col-span-5">
           <div className="flex items-center gap-2">
             <MessageSquarePlus
               className="size-5 text-terracotta"
               aria-hidden="true"
             />
-            <h2 className="text-base font-bold text-charcoal">Leave a Note</h2>
+            <h2 className="text-xl font-semibold leading-snug text-charcoal">Leave a Note</h2>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <Input
               label="Your Name"
               placeholder="e.g. Kamau or Sarah"
@@ -177,7 +163,7 @@ export function CommunityPage() {
               maxLength={40}
             />
 
-            <div className="space-y-1.5">
+            <div className="space-y-2.5">
               <span className="block text-sm font-medium text-charcoal">Topic</span>
               <div className="flex flex-wrap gap-2">
                 {(['Cultural Tip', 'Question', 'Recipe Note'] as const).map(
@@ -191,8 +177,8 @@ export function CommunityPage() {
                         aria-pressed={active}
                         className={
                           active
-                            ? 'rounded-full border border-savanna-green bg-savanna-green px-3 py-1 text-xs font-medium text-cream'
-                            : 'rounded-full border border-warm-border bg-cream px-3 py-1 text-xs font-medium text-charcoal-muted hover:bg-cream-dark'
+                            ? 'rounded-full border border-savanna-green bg-savanna-green px-3.5 py-1.5 text-xs font-medium text-cream'
+                            : 'rounded-full border border-warm-border/70 bg-cream px-3.5 py-1.5 text-xs font-medium text-charcoal-muted hover:bg-cream-dark'
                         }
                       >
                         {itemTopic}
@@ -203,7 +189,7 @@ export function CommunityPage() {
               </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-2.5">
               <label
                 htmlFor="community-message"
                 className="block text-sm font-medium text-charcoal"
@@ -212,12 +198,12 @@ export function CommunityPage() {
               </label>
               <textarea
                 id="community-message"
-                rows={4}
+                rows={5}
                 maxLength={320}
                 value={message}
                 onChange={(event) => setMessage(event.target.value)}
                 placeholder="Ask a Kiswahili question or share a phrase you practiced today..."
-                className="w-full rounded-xl border border-warm-border bg-surface p-3 text-sm text-charcoal placeholder:text-charcoal-muted/70 focus:border-savanna-green focus:outline-none"
+                className="w-full rounded-2xl border border-warm-border bg-surface p-4 text-sm leading-relaxed text-charcoal placeholder:text-charcoal-muted/70 focus:border-savanna-green focus:outline-none"
               />
             </div>
 
@@ -242,28 +228,28 @@ export function CommunityPage() {
         {/* Comments Feed */}
         <section
           aria-labelledby="community-feed-heading"
-          className="space-y-3 lg:col-span-7"
+          className="space-y-5 lg:col-span-7"
         >
           <h2
             id="community-feed-heading"
-            className="text-base font-bold text-charcoal"
+            className="text-xl font-semibold leading-snug text-charcoal"
           >
             Recent Notes ({comments.length})
           </h2>
 
-          <div className="space-y-3">
+          <div className="space-y-5">
             {comments.map((comment) => (
-              <Card key={comment.id} className="space-y-2.5 p-5">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="flex items-center gap-2">
-                    <span className="flex size-7 items-center justify-center rounded-full bg-savanna-green-soft text-xs font-bold text-savanna-green">
+              <Card key={comment.id} className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <span className="flex size-9 items-center justify-center rounded-full bg-savanna-green-soft text-xs font-bold text-savanna-green">
                       {comment.author.charAt(0).toUpperCase()}
                     </span>
-                    <span className="text-sm font-bold text-charcoal">
+                    <span className="text-sm font-semibold text-charcoal">
                       {comment.author}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <Badge tone={TOPIC_TONE[comment.topic]}>{comment.topic}</Badge>
                     <span className="text-xs text-charcoal-muted">
                       {new Date(comment.createdAt).toLocaleDateString()}

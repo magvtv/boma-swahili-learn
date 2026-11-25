@@ -17,10 +17,10 @@ const MOBILE_BOTTOM_IDS = new Set([
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const baseItem =
-    'flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-colors duration-150';
+    'flex items-center gap-3.5 rounded-2xl px-4 py-3 text-sm transition-colors duration-150';
 
   return (
-    <ul className="space-y-1">
+    <ul className="space-y-1.5">
       <li>
         <NavLink
           to="/"
@@ -30,8 +30,8 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             cn(
               baseItem,
               isActive
-                ? 'bg-savanna-green text-cream shadow-xs'
-                : 'text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
+                ? 'bg-savanna-green-soft/80 font-semibold text-savanna-green'
+                : 'text-charcoal-muted hover:bg-cream-dark/60 hover:text-charcoal',
             )
           }
         >
@@ -48,8 +48,8 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
               cn(
                 baseItem,
                 isActive
-                  ? 'bg-savanna-green text-cream shadow-xs'
-                  : 'text-charcoal-muted hover:bg-cream-dark hover:text-charcoal',
+                  ? 'bg-savanna-green-soft/80 font-semibold text-savanna-green'
+                  : 'text-charcoal-muted hover:bg-cream-dark/60 hover:text-charcoal',
               )
             }
           >
@@ -253,8 +253,8 @@ export function AppLayout() {
       </dialog>
 
       {/* Top Header */}
-      <header className="sticky top-0 z-30 border-b border-warm-border bg-surface">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:flex-nowrap sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-30 border-b border-warm-border/60 bg-surface">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-5 py-3.5 sm:flex-nowrap sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -315,7 +315,6 @@ export function AppLayout() {
                   </button>
                 ) : null
               }
-              className="h-9 bg-cream/70"
             />
 
             {showSearchDropdown && (
@@ -413,7 +412,7 @@ export function AppLayout() {
           </div>
 
           <div className="order-2 flex items-center gap-3 sm:order-3">
-            <span className="hidden rounded-full border border-warm-border bg-cream px-3.5 py-1 text-xs font-medium text-savanna-green md:inline-flex">
+            <span className="hidden text-xs font-medium text-savanna-green md:inline-flex">
               Karibu mezani — Welcome
             </span>
           </div>
@@ -421,25 +420,25 @@ export function AppLayout() {
       </header>
 
       {/* Desktop Sidebar + Main Content */}
-      <div className="mx-auto flex max-w-7xl gap-8 px-4 py-6 sm:px-6 lg:px-8">
-        <aside className="hidden w-64 shrink-0 lg:block">
-          <div className="sticky top-22 rounded-2xl border border-warm-border bg-surface p-4 shadow-[0_2px_12px_rgba(42,33,27,0.04)]">
+      <div className="mx-auto flex max-w-7xl gap-12 px-5 py-8 sm:px-6 lg:px-8 lg:py-10">
+        <aside className="hidden w-60 shrink-0 lg:block">
+          <div className="sticky top-28 py-2">
             <nav aria-label="Primary">
-              <p className="mb-3 px-3 text-[11px] font-semibold tracking-wider text-charcoal-muted uppercase">
-                Learning Modules
+              <p className="mb-4 px-4 text-xs font-medium text-charcoal-muted">
+                Learning modules
               </p>
               <NavLinks />
             </nav>
 
-            <div className="mt-6 rounded-xl border border-savanna-green/15 bg-savanna-green-soft p-3.5 text-xs text-savanna-green">
-              <p className="font-semibold">Neno la Siku</p>
-              <p className="mt-1 font-medium text-charcoal">“Chakula kitamu”</p>
-              <p className="mt-0.5 text-charcoal-muted">Delicious food</p>
+            <div className="mt-10 border-t border-warm-border/70 px-4 pt-6 text-xs leading-relaxed">
+              <p className="font-medium text-terracotta">Neno la Siku</p>
+              <p className="mt-2 font-serif text-base text-charcoal">“Chakula kitamu”</p>
+              <p className="mt-1 text-charcoal-muted">Delicious food</p>
             </div>
           </div>
         </aside>
 
-        <main className="min-w-0 flex-1 pb-24 lg:pb-12">
+        <main className="min-w-0 flex-1 pb-24 lg:pb-16">
           <div key={location.pathname} className="boma-page-enter">
             <Outlet />
           </div>
