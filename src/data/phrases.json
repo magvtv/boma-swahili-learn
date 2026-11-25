@@ -1,0 +1,194 @@
+[
+  {
+    "id": "kt-1",
+    "category": "Kitchen Tools",
+    "swahili": "Sufuria",
+    "english": "Cooking pot",
+    "pronunciation": "soo-foo-REE-ah",
+    "example": "Weka maji kwenye sufuria."
+  },
+  {
+    "id": "kt-2",
+    "category": "Kitchen Tools",
+    "swahili": "Mwiko",
+    "english": "Wooden cooking spoon",
+    "pronunciation": "MWEE-koh",
+    "example": "Koroga ugali kwa mwiko."
+  },
+  {
+    "id": "kt-3",
+    "category": "Kitchen Tools",
+    "swahili": "Kisu",
+    "english": "Knife",
+    "pronunciation": "KEE-soo",
+    "example": "Tumia kisu kukata nyanya."
+  },
+  {
+    "id": "kt-4",
+    "category": "Kitchen Tools",
+    "swahili": "Kikaango",
+    "english": "Frying pan",
+    "pronunciation": "kee-kah-AHN-goh",
+    "example": "Pasha mafuta kwenye kikaango."
+  },
+  {
+    "id": "kt-5",
+    "category": "Kitchen Tools",
+    "swahili": "Sahani",
+    "english": "Plate",
+    "pronunciation": "sah-HAH-nee",
+    "example": "Pakua chakula kwenye sahani."
+  },
+  {
+    "id": "kt-6",
+    "category": "Kitchen Tools",
+    "swahili": "Kikombe",
+    "english": "Cup / Mug",
+    "pronunciation": "kee-KOHM-beh",
+    "example": "Niletee kikombe cha chai."
+  },
+  {
+    "id": "ing-1",
+    "category": "Ingredients",
+    "swahili": "Unga wa mahindi",
+    "english": "Maize flour",
+    "pronunciation": "OON-gah wah mah-HEEN-dee",
+    "example": "Tunahitaji unga wa mahindi kwa ugali."
+  },
+  {
+    "id": "ing-2",
+    "category": "Ingredients",
+    "swahili": "Sukuma wiki",
+    "english": "Collard greens / Kale",
+    "pronunciation": "soo-KOO-mah WEE-kee",
+    "example": "Osha sukuma wiki vizuri kabla ya kupika."
+  },
+  {
+    "id": "ing-3",
+    "category": "Ingredients",
+    "swahili": "Kitunguu",
+    "english": "Onion",
+    "pronunciation": "kee-toon-GOO",
+    "example": "Kaanga kitunguu mpaka kiwe cha kahawia."
+  },
+  {
+    "id": "ing-4",
+    "category": "Ingredients",
+    "swahili": "Nyanya",
+    "english": "Tomato",
+    "pronunciation": "NYAH-nyah",
+    "example": "Ongeza nyanya mbili zilizokatwa."
+  },
+  {
+    "id": "ing-5",
+    "category": "Ingredients",
+    "swahili": "Tui la nazi",
+    "english": "Coconut milk",
+    "pronunciation": "TOO-ee lah NAH-zee",
+    "example": "Tui la nazi hufanya mchuzi uwe mtamu."
+  },
+  {
+    "id": "ing-6",
+    "category": "Ingredients",
+    "swahili": "Tangawizi",
+    "english": "Ginger",
+    "pronunciation": "tahn-gah-WEE-zee",
+    "example": "Weka tangawizi kidogo kwenye chai."
+  },
+  {
+    "id": "ca-1",
+    "category": "Cooking Actions",
+    "swahili": "Kukata",
+    "english": "To chop / cut",
+    "pronunciation": "koo-KAH-tah",
+    "example": "Anza kwa kukata vitunguu."
+  },
+  {
+    "id": "ca-2",
+    "category": "Cooking Actions",
+    "swahili": "Kukaanga",
+    "english": "To fry / sauté",
+    "pronunciation": "koo-kah-AHN-gah",
+    "example": "Endelea kukaanga kwa moto mdogo."
+  },
+  {
+    "id": "ca-3",
+    "category": "Cooking Actions",
+    "swahili": "Kuchemsha",
+    "english": "To boil",
+    "pronunciation": "koo-chehm-SHAH",
+    "example": "Chemsha maji kabla ya kuweka unga."
+  },
+  {
+    "id": "ca-4",
+    "category": "Cooking Actions",
+    "swahili": "Kukoroga",
+    "english": "To stir",
+    "pronunciation": "koo-koh-ROH-gah",
+    "example": "Koroga mchuzi ili usishike chini."
+  },
+  {
+    "id": "ca-5",
+    "category": "Cooking Actions",
+    "swahili": "Kuonja",
+    "english": "To taste",
+    "pronunciation": "koo-OHN-jah",
+    "example": "Onja chumvi kabla ya kupakua."
+  },
+  {
+    "id": "ca-6",
+    "category": "Cooking Actions",
+    "swahili": "Kupakua",
+    "english": "To serve food",
+    "pronunciation": "koo-pah-KOO-ah",
+    "example": "Chakula kimeiva, tunaweza kupakua."
+  },
+  {
+    "id": "cp-1",
+    "category": "Common Phrases",
+    "swahili": "Karibu chakula",
+    "english": "Welcome to the meal",
+    "pronunciation": "kah-REE-boo chah-KOO-lah",
+    "example": "Karibu chakula, kaa mezani!"
+  },
+  {
+    "id": "cp-2",
+    "category": "Common Phrases",
+    "swahili": "Chakula ni kitamu sana",
+    "english": "The food is very delicious",
+    "pronunciation": "chah-KOO-lah nee kee-TAH-moo SAH-nah",
+    "example": "Asante mpishi, chakula ni kitamu sana!"
+  },
+  {
+    "id": "cp-3",
+    "category": "Common Phrases",
+    "swahili": "Nina njaa",
+    "english": "I am hungry",
+    "pronunciation": "NEE-nah NJAH",
+    "example": "Nina njaa, tuagize chakula."
+  },
+  {
+    "id": "cp-4",
+    "category": "Common Phrases",
+    "swahili": "Nimeshiba, asante",
+    "english": "I am full, thank you",
+    "pronunciation": "nee-meh-SHEE-bah, ah-SAHN-teh",
+    "example": "Nimeshiba, asante kwa ukarimu."
+  },
+  {
+    "id": "cp-5",
+    "category": "Common Phrases",
+    "swahili": "Naomba maji ya kunywa",
+    "english": "May I have drinking water, please?",
+    "pronunciation": "nah-OHM-bah MAH-jee yah KOON-ywah",
+    "example": "Samahani, naomba maji ya kunywa."
+  },
+  {
+    "id": "cp-6",
+    "category": "Common Phrases",
+    "swahili": "Chumvi iko wapi?",
+    "english": "Where is the salt?",
+    "pronunciation": "CHOOM-vee EE-koh WAH-pee",
+    "example": "Samahani, chumvi iko wapi?"
+  }
+]
