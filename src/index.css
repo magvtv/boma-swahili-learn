@@ -1,0 +1,238 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #FAF6F0;
+  --color-cream-dark: #F2EAE0;
+  --color-surface: #FFFFFF;
+  --color-savanna-green: #1B4332;
+  --color-savanna-green-hover: #2D6A4F;
+  --color-savanna-green-soft: #E8F0EB;
+  --color-terracotta: #C85A32;
+  --color-terracotta-hover: #A64422;
+  --color-terracotta-soft: #FAEBE6;
+  --color-ochre: #D99B26;
+  --color-ochre-soft: #FDF5E6;
+  --color-charcoal: #1E1E1C;
+  --color-charcoal-muted: #57534E;
+  --color-warm-border: #E4DDD3;
+}
+
+@layer base {
+  html {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--color-cream);
+    color: var(--color-charcoal);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-terracotta);
+    outline-offset: 2px;
+  }
+
+  /* Prevent underlying page scroll while a modal dialog is open */
+  dialog:modal {
+    overscroll-behavior: contain;
+  }
+
+  dialog::backdrop {
+    overflow: hidden;
+    overscroll-behavior: contain;
+  }
+}
+
+/* Subtle button press micro-interaction */
+@media (prefers-reduced-motion: no-preference) {
+  .boma-btn {
+    transition:
+      background-color 150ms ease,
+      color 150ms ease,
+      border-color 150ms ease,
+      transform 120ms ease;
+  }
+
+  .boma-btn:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .boma-page-enter {
+    animation: boma-page-fade-in 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes boma-page-fade-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Modal dialog entry/exit animation */
+.boma-modal {
+  opacity: 0;
+  translate: 0 8px;
+  transition:
+    opacity 180ms ease-out,
+    translate 180ms ease-out,
+    display 180ms ease-out,
+    overlay 180ms ease-out;
+  transition-behavior: allow-discrete;
+}
+
+.boma-modal[open] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+@starting-style {
+  .boma-modal[open] {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+.boma-modal::backdrop {
+  background-color: rgba(30, 30, 28, 0.45);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  transition:
+    opacity 180ms ease-out,
+    display 180ms ease-out,
+    overlay 180ms ease-out;
+  transition-behavior: allow-discrete;
+}
+
+.boma-modal[open]::backdrop {
+  opacity: 1;
+}
+
+@starting-style {
+  .boma-modal[open]::backdrop {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boma-modal,
+  .boma-modal::backdrop {
+    translate: none;
+    transition-duration: 0.08s;
+  }
+
+  @starting-style {
+    .boma-modal[open] {
+      translate: none;
+    }
+  }
+}
+
+/* Mobile navigation drawer with native scroll-snap and ::backdrop */
+.boma-drawer {
+  --drawer-width: min(20rem, 82dvw, calc(100dvw - 24px));
+  --drawer-backdrop: 0;
+
+  inset: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  overflow: visible;
+}
+
+.boma-drawer::backdrop {
+  background: #1E1E1C;
+  opacity: calc(var(--drawer-backdrop) * 0.5);
+}
+
+.boma-drawer-scroller {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--drawer-width) 100%;
+  overflow-x: scroll;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .boma-drawer-scroller {
+    scroll-behavior: smooth;
+  }
+}
+
+.boma-drawer-scroller::after {
+  content: "";
+  scroll-snap-align: end;
+  scroll-initial-target: nearest;
+}
+
+.boma-drawer-sheet {
+  height: 100svh;
+  overflow-y: auto;
+  scroll-snap-align: start;
+  scrollbar-width: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  .boma-drawer {
+    timeline-scope: --boma-drawer-fade;
+    animation: boma-fade-backdrop linear both;
+    animation-timeline: --boma-drawer-fade;
+  }
+
+  .boma-drawer-scroller {
+    scroll-timeline: --boma-drawer-fade x;
+  }
+
+  @property --drawer-backdrop {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: 0;
+  }
+
+  @keyframes boma-fade-backdrop {
+    0% {
+      --drawer-backdrop: 1;
+    }
+    100% {
+      --drawer-backdrop: 0;
+    }
+  }
+}
+
+/* Interactive 3D Flashcard flip */
+.boma-card-scene {
+  perspective: 1200px;
+}
+
+.boma-card-flipper {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.boma-card-flipper[data-flipped="true"] {
+  transform: rotateY(180deg);
+}
+
+.boma-card-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.boma-card-face-back {
+  transform: rotateY(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boma-card-flipper {
+    transition: none;
+  }
+}
