@@ -33,11 +33,7 @@ export function ProgressBar({
     <div className={cn('space-y-1.5', className)}>
       {(label || showPercentage) && (
         <div className="flex items-center justify-between gap-2 text-xs font-medium">
-          {label ? (
-            <span className="text-charcoal">{label}</span>
-          ) : (
-            <span />
-          )}
+          {label ? <span className="text-charcoal">{label}</span> : <span />}
           {showPercentage && (
             <span className="tabular-nums text-charcoal-muted">{percent}%</span>
           )}

@@ -106,10 +106,17 @@ export function QuizzesPage() {
     if (!activeQuestion || submittedRecord || !typedInput.trim()) return;
     const normalized = normalizeAnswer(typedInput);
     const isCorrect = activeQuestion.acceptedAnswers.includes(normalized);
+    const isExact = normalized === normalizeAnswer(activeQuestion.correctAnswer);
+    const note =
+      isCorrect && !isExact
+        ? `Accepted! Full form: ${activeQuestion.correctAnswer}`
+        : undefined;
+
     const record: QuizAnswerRecord = {
       question: activeQuestion,
       userAnswer: typedInput.trim(),
       isCorrect,
+      note,
     };
     setSubmittedRecord(record);
     setAnswers((prev) => [...prev, record]);
@@ -439,6 +446,11 @@ export function QuizzesPage() {
                     <p className="font-semibold">
                       {submittedRecord.isCorrect ? 'Sahihi! Correct.' : 'Not quite.'}
                     </p>
+                    {submittedRecord.note && (
+                      <p className="mt-0.5 text-xs font-medium">
+                        {submittedRecord.note}
+                      </p>
+                    )}
                     {!submittedRecord.isCorrect && (
                       <p className="mt-0.5 text-xs">
                         Correct answer:{' '}

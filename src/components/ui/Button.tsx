@@ -17,7 +17,7 @@ const VARIANT_STYLES: Record<ButtonVariant, string> = {
   terracotta:
     'bg-terracotta text-cream hover:bg-terracotta-hover shadow-xs',
   secondary:
-    'bg-cream-dark text-charcoal hover:bg-warm-border/70',
+    'bg-cream-dark text-charcoal border border-warm-border hover:bg-warm-border/70',
   outline:
     'border border-warm-border bg-surface text-charcoal hover:bg-cream-dark',
   ghost:
@@ -25,9 +25,9 @@ const VARIANT_STYLES: Record<ButtonVariant, string> = {
 };
 
 const SIZE_STYLES: Record<ButtonSize, string> = {
-  sm: 'h-8 px-3 text-xs gap-1.5 rounded-lg',
-  md: 'h-10 px-4 text-sm gap-2 rounded-xl',
-  lg: 'h-12 px-5 text-base gap-2.5 rounded-xl',
+  sm: 'h-8 px-3.5 text-xs gap-1.5 rounded-xl',
+  md: 'h-10 px-4.5 text-sm gap-2 rounded-xl',
+  lg: 'h-12 px-5.5 text-base gap-2.5 rounded-2xl',
 };
 
 export function Button({
@@ -44,7 +44,7 @@ export function Button({
     <button
       type={type}
       className={cn(
-        'boma-btn inline-flex items-center justify-center font-medium transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50',
+        'boma-btn inline-flex items-center justify-center font-medium disabled:pointer-events-none disabled:opacity-50',
         VARIANT_STYLES[variant],
         SIZE_STYLES[size],
         className,

@@ -29,11 +29,24 @@ function buildAcceptedAnswers(english: string, swahili: string, isSwahiliTarget:
   const normalizedFull = normalizeAnswer(target);
   const set = new Set<string>([normalizedFull, ...parts]);
 
-  // Also allow omitting leading "to " for English infinitives like "To chop / cut"
   if (!isSwahiliTarget) {
+    // Allow omitting leading "to " for infinitives or "the "/"a "/"an " articles
     for (const item of [...set]) {
       if (item.startsWith('to ')) {
         set.add(item.slice(3).trim());
+      }
+      for (const article of ['the ', 'a ', 'an ']) {
+        if (item.startsWith(article)) {
+          set.add(item.slice(article.length).trim());
+        }
+      }
+    }
+  } else {
+    // Allow Swahili verb stem without the "ku-" infinitive prefix (e.g., "chemsha" for "Kuchemsha")
+    const isInfinitive = english.trim().toLowerCase().startsWith('to ');
+    for (const item of [...set]) {
+      if (isInfinitive && item.startsWith('ku') && item.length > 4) {
+        set.add(item.slice(2).trim());
       }
     }
   }

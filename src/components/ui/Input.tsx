@@ -40,7 +40,7 @@ export function Input({
       <div className="relative flex items-center">
         {leftIcon && (
           <span
-            className="pointer-events-none absolute left-3 text-charcoal-muted"
+            className="pointer-events-none absolute left-3.5 text-charcoal-muted"
             aria-hidden="true"
           >
             {leftIcon}
@@ -56,7 +56,7 @@ export function Input({
             error
               ? 'border-terracotta focus:border-terracotta'
               : 'border-warm-border hover:border-charcoal-muted/40',
-            Boolean(leftIcon) && 'pl-9',
+            Boolean(leftIcon) && 'pl-10',
             Boolean(rightSlot) && 'pr-9',
             className,
           )}

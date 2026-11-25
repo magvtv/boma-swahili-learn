@@ -19,6 +19,7 @@ export interface QuizAnswerRecord {
   question: QuizQuestion;
   userAnswer: string;
   isCorrect: boolean;
+  note?: string;
 }
 
 export interface QuizHighScores {

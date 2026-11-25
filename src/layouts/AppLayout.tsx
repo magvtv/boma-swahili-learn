@@ -17,7 +17,7 @@ const MOBILE_BOTTOM_IDS = new Set([
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const baseItem =
-    'flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-150';
+    'flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition-colors duration-150';
 
   return (
     <ul className="space-y-1">
@@ -35,7 +35,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             )
           }
         >
-          <Home className="size-5 shrink-0" aria-hidden="true" />
+          <Home className="size-4.5 shrink-0" aria-hidden="true" />
           <span>Dashboard</span>
         </NavLink>
       </li>
@@ -53,7 +53,7 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
               )
             }
           >
-            <FeatureIcon id={feature.id} className="size-5 shrink-0" />
+            <FeatureIcon id={feature.id} className="size-4.5 shrink-0" />
             <span className="flex-1">{feature.title}</span>
           </NavLink>
         </li>
@@ -196,7 +196,7 @@ export function AppLayout() {
   const mobileBottomFeatures = FEATURES.filter((f) => MOBILE_BOTTOM_IDS.has(f.id));
 
   return (
-    <div className="min-h-dvh bg-cream text-charcoal">
+    <div className="min-h-dvh text-charcoal">
       {/* Mobile Navigation Drawer (<dialog>) */}
       <dialog
         ref={dialogRef}
@@ -217,7 +217,7 @@ export function AppLayout() {
           >
             <div className="mb-6 flex items-center justify-between border-b border-warm-border pb-4">
               <div className="flex items-center gap-2.5">
-                <span className="flex size-9 items-center justify-center rounded-xl bg-savanna-green text-cream">
+                <span className="flex size-9 items-center justify-center rounded-xl bg-savanna-green text-cream shadow-xs">
                   <Flame className="size-5" aria-hidden="true" />
                 </span>
                 <div>
@@ -232,7 +232,7 @@ export function AppLayout() {
                 onClick={closeDrawer}
                 aria-label="Close navigation menu"
                 autoFocus
-                className="flex size-9 items-center justify-center rounded-lg text-charcoal-muted hover:bg-cream-dark hover:text-charcoal"
+                className="flex size-9 items-center justify-center rounded-xl text-charcoal-muted hover:bg-cream-dark hover:text-charcoal"
               >
                 <X className="size-5" aria-hidden="true" />
               </button>
@@ -242,10 +242,10 @@ export function AppLayout() {
               <NavLinks onNavigate={closeDrawer} />
             </div>
 
-            <div className="mt-6 rounded-xl bg-cream-dark p-3.5 text-xs text-charcoal-muted">
+            <div className="mt-6 rounded-2xl border border-warm-border bg-cream p-3.5 text-xs text-charcoal-muted">
               <p className="font-semibold text-charcoal">Habari za leo!</p>
               <p className="mt-1 leading-relaxed">
-                Practice a few minutes daily to build fluency.
+                Five unhurried minutes over chai is enough to keep your Swahili warm.
               </p>
             </div>
           </nav>
@@ -253,7 +253,7 @@ export function AppLayout() {
       </dialog>
 
       {/* Top Header */}
-      <header className="sticky top-0 z-30 border-b border-warm-border bg-surface/95 backdrop-blur-xs">
+      <header className="sticky top-0 z-30 border-b border-warm-border bg-surface">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:flex-nowrap sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <button
@@ -413,8 +413,8 @@ export function AppLayout() {
           </div>
 
           <div className="order-2 flex items-center gap-3 sm:order-3">
-            <span className="hidden rounded-full border border-warm-border bg-cream px-3 py-1 text-xs font-medium text-savanna-green md:inline-flex">
-              Karibu — Welcome
+            <span className="hidden rounded-full border border-warm-border bg-cream px-3.5 py-1 text-xs font-medium text-savanna-green md:inline-flex">
+              Karibu mezani — Welcome
             </span>
           </div>
         </div>
@@ -423,15 +423,15 @@ export function AppLayout() {
       {/* Desktop Sidebar + Main Content */}
       <div className="mx-auto flex max-w-7xl gap-8 px-4 py-6 sm:px-6 lg:px-8">
         <aside className="hidden w-64 shrink-0 lg:block">
-          <div className="sticky top-22 rounded-2xl border border-warm-border bg-surface p-4 shadow-xs">
+          <div className="sticky top-22 rounded-2xl border border-warm-border bg-surface p-4 shadow-[0_2px_12px_rgba(42,33,27,0.04)]">
             <nav aria-label="Primary">
-              <p className="mb-3 px-3 text-xs font-semibold tracking-wider text-charcoal-muted uppercase">
+              <p className="mb-3 px-3 text-[11px] font-semibold tracking-wider text-charcoal-muted uppercase">
                 Learning Modules
               </p>
               <NavLinks />
             </nav>
 
-            <div className="mt-6 rounded-xl bg-savanna-green-soft p-3.5 text-xs text-savanna-green">
+            <div className="mt-6 rounded-xl border border-savanna-green/15 bg-savanna-green-soft p-3.5 text-xs text-savanna-green">
               <p className="font-semibold">Neno la Siku</p>
               <p className="mt-1 font-medium text-charcoal">“Chakula kitamu”</p>
               <p className="mt-0.5 text-charcoal-muted">Delicious food</p>
@@ -449,7 +449,7 @@ export function AppLayout() {
       {/* Mobile Bottom Navigation Bar */}
       <nav
         aria-label="Mobile quick navigation"
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-warm-border bg-surface/95 px-2 py-1.5 backdrop-blur-xs lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-warm-border bg-surface px-2 py-1.5 lg:hidden"
       >
         <ul className="mx-auto grid max-w-md grid-cols-5 gap-1">
           <li>
