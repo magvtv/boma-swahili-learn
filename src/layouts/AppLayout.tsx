@@ -8,13 +8,6 @@ import { GRAMMAR_LESSONS } from '../data/grammar';
 import { PHRASES } from '../data/phrases';
 import { cn } from '../utils/cn';
 
-const MOBILE_BOTTOM_IDS = new Set([
-  'translator',
-  'flashcards',
-  'quizzes',
-  'phrasebook',
-]);
-
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const baseItem =
     'group flex items-center gap-3.5 rounded-2xl px-4 py-3 text-sm transition-colors duration-100';
@@ -194,8 +187,6 @@ export function AppLayout() {
       dialog.removeEventListener('cancel', handleCancel);
     };
   }, [closeDrawer]);
-
-  const mobileBottomFeatures = FEATURES.filter((f) => MOBILE_BOTTOM_IDS.has(f.id));
 
   return (
     <div className="min-h-dvh text-charcoal">
@@ -412,56 +403,12 @@ export function AppLayout() {
           </div>
         </aside>
 
-        <main className="min-w-0 flex-1 pb-24 lg:pb-16">
+        <main className="min-w-0 flex-1 pb-16">
           <div key={location.pathname} className="boma-page-enter mx-auto max-w-3xl">
             <Outlet />
           </div>
         </main>
       </div>
-
-      {/* Mobile Bottom Navigation Bar */}
-      <nav
-        aria-label="Mobile quick navigation"
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-warm-border/50 bg-cream px-2 py-2 lg:hidden"
-      >
-        <ul className="mx-auto grid max-w-md grid-cols-5 gap-1">
-          <li>
-            <NavLink
-              to="/"
-              end
-              className={({ isActive }) =>
-                cn(
-                  'flex flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 text-[11px] font-medium transition-colors',
-                  isActive
-                    ? 'bg-savanna-green-soft/60 text-savanna-green'
-                    : 'text-charcoal-muted hover:text-charcoal',
-                )
-              }
-            >
-              <Home className="size-4.5" aria-hidden="true" />
-              <span>Home</span>
-            </NavLink>
-          </li>
-          {mobileBottomFeatures.map((feature) => (
-            <li key={feature.id}>
-              <NavLink
-                to={feature.path}
-                className={({ isActive }) =>
-                  cn(
-                    'flex flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 text-[11px] font-medium transition-colors',
-                    isActive
-                      ? 'bg-savanna-green-soft/60 text-savanna-green'
-                      : 'text-charcoal-muted hover:text-charcoal',
-                  )
-                }
-              >
-                <FeatureIcon id={feature.id} className="size-4.5" />
-                <span className="truncate">{feature.title}</span>
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </nav>
     </div>
   );
 }
