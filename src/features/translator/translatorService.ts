@@ -6,11 +6,20 @@ import type {
 
 const CACHE_STORAGE_KEY = 'boma_translator_history_v1';
 const MAX_HISTORY_ITEMS = 20;
-const TRANSLATE_ENDPOINT = '/api/translate';
+const AZURE_TRANSLATE_ENDPOINT = '/api/translate';
+const MYMEMORY_ENDPOINT = 'https://api.mymemory.translated.net/get';
 
 interface TranslateApiResponse {
   translatedText?: string;
   error?: string;
+}
+
+interface MyMemoryResponse {
+  responseStatus: number;
+  responseDetails?: string;
+  responseData?: {
+    translatedText?: string;
+  };
 }
 
 function readHistory(): TranslationEntry[] {
@@ -75,6 +84,70 @@ function saveTranslation(entry: TranslationEntry): TranslationEntry[] {
   return updated;
 }
 
+function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === 'AbortError';
+}
+
+async function translateWithAzure(
+  text: string,
+  from: LanguageCode,
+  to: LanguageCode,
+  signal?: AbortSignal,
+): Promise<string> {
+  const response = await fetch(AZURE_TRANSLATE_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, from, to }),
+    signal,
+  });
+
+  let data: TranslateApiResponse = {};
+  try {
+    data = (await response.json()) as TranslateApiResponse;
+  } catch {
+    throw new Error('Unexpected response from Azure translation service.');
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data.error || `Azure translation returned status ${response.status}.`,
+    );
+  }
+
+  const translated = data.translatedText?.trim();
+  if (!translated) {
+    throw new Error('Azure translation returned an empty result.');
+  }
+
+  return translated;
+}
+
+async function translateWithMyMemory(
+  text: string,
+  from: LanguageCode,
+  to: LanguageCode,
+  signal?: AbortSignal,
+): Promise<string> {
+  const langpair = `${from}|${to}`;
+  const url = `${MYMEMORY_ENDPOINT}?q=${encodeURIComponent(text)}&langpair=${encodeURIComponent(langpair)}`;
+
+  const response = await fetch(url, { signal });
+  if (!response.ok) {
+    throw new Error(`Translation service returned status ${response.status}.`);
+  }
+
+  const data = (await response.json()) as MyMemoryResponse;
+  const translated = data.responseData?.translatedText?.trim();
+
+  if (data.responseStatus !== 200 || !translated) {
+    throw new Error(
+      data.responseDetails || 'Could not translate this text. Please try again.',
+    );
+  }
+
+  return translated;
+}
+
 export async function translateText(
   text: string,
   from: LanguageCode,
@@ -111,29 +184,14 @@ export async function translateText(
     throw new Error('Source and target languages must be different.');
   }
 
-  const response = await fetch(TRANSLATE_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text: trimmed, from, to }),
-    signal,
-  });
-
-  let data: TranslateApiResponse = {};
+  let translated: string;
   try {
-    data = (await response.json()) as TranslateApiResponse;
-  } catch {
-    throw new Error('Unexpected response from translation service.');
-  }
-
-  if (!response.ok) {
-    throw new Error(
-      data.error || `Translation service returned status ${response.status}.`,
-    );
-  }
-
-  const translated = data.translatedText?.trim();
-  if (!translated) {
-    throw new Error('Could not translate this text. Please try again.');
+    translated = await translateWithAzure(trimmed, from, to, signal);
+  } catch (error) {
+    if (isAbortError(error) || signal?.aborted) {
+      throw error;
+    }
+    translated = await translateWithMyMemory(trimmed, from, to, signal);
   }
 
   const entry: TranslationEntry = {
