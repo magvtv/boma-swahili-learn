@@ -261,7 +261,8 @@ export function TranslatorPage() {
 
       <div className="space-y-4">
         <p className="text-center text-xs text-charcoal-muted">
-          Powered by MyMemory. Recent translations are saved on this device.
+          Powered by Azure AI Translator. Recent translations are saved on this
+          device.
         </p>
 
         <Disclosure label="Try a sample">

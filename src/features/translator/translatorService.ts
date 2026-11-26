@@ -1,5 +1,4 @@
 import type {
-  LangPair,
   LanguageCode,
   TranslationEntry,
   TranslationResult,
@@ -7,14 +6,11 @@ import type {
 
 const CACHE_STORAGE_KEY = 'boma_translator_history_v1';
 const MAX_HISTORY_ITEMS = 20;
-const MYMEMORY_ENDPOINT = 'https://api.mymemory.translated.net/get';
+const TRANSLATE_ENDPOINT = '/api/translate';
 
-interface MyMemoryResponse {
-  responseStatus: number;
-  responseDetails?: string;
-  responseData?: {
-    translatedText?: string;
-  };
+interface TranslateApiResponse {
+  translatedText?: string;
+  error?: string;
 }
 
 function readHistory(): TranslationEntry[] {
@@ -115,21 +111,29 @@ export async function translateText(
     throw new Error('Source and target languages must be different.');
   }
 
-  const langpair: LangPair = from === 'en' ? 'en|sw' : 'sw|en';
-  const url = `${MYMEMORY_ENDPOINT}?q=${encodeURIComponent(trimmed)}&langpair=${encodeURIComponent(langpair)}`;
+  const response = await fetch(TRANSLATE_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text: trimmed, from, to }),
+    signal,
+  });
 
-  const response = await fetch(url, { signal });
-  if (!response.ok) {
-    throw new Error(`Translation service returned status ${response.status}.`);
+  let data: TranslateApiResponse = {};
+  try {
+    data = (await response.json()) as TranslateApiResponse;
+  } catch {
+    throw new Error('Unexpected response from translation service.');
   }
 
-  const data = (await response.json()) as MyMemoryResponse;
-  const translated = data.responseData?.translatedText?.trim();
-
-  if (data.responseStatus !== 200 || !translated) {
+  if (!response.ok) {
     throw new Error(
-      data.responseDetails || 'Could not translate this text. Please try again.',
+      data.error || `Translation service returned status ${response.status}.`,
     );
+  }
+
+  const translated = data.translatedText?.trim();
+  if (!translated) {
+    throw new Error('Could not translate this text. Please try again.');
   }
 
   const entry: TranslationEntry = {
