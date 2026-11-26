@@ -1,4 +1,4 @@
-import { BookOpen, Flame, GraduationCap, Home, Menu, Search, X } from 'lucide-react';
+import { BookOpen, GraduationCap, Home, Menu, Search, X } from 'lucide-react';
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { FeatureIcon } from '../components/ui/FeatureIcon';
@@ -220,11 +220,11 @@ export function AppLayout() {
             <div className="mb-6 flex items-center justify-between border-b border-warm-border pb-4">
               <div className="flex items-center gap-2.5">
                 <span className="flex size-9 items-center justify-center rounded-xl bg-savanna-green text-cream shadow-xs">
-                  <Flame className="size-5" aria-hidden="true" />
+                  <BookOpen className="size-5" aria-hidden="true" />
                 </span>
                 <div>
                   <p className="text-sm font-bold leading-none text-charcoal">
-                    Jasmin Swahili Lab
+                    Jifunze Kiswahili
                   </p>
                 </div>
               </div>
@@ -263,10 +263,10 @@ export function AppLayout() {
 
             <NavLink to="/" className="flex items-center gap-2.5">
               <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-savanna-green text-cream shadow-xs">
-                <Flame className="size-5" aria-hidden="true" />
+                <BookOpen className="size-5" aria-hidden="true" />
               </span>
               <span className="text-sm font-semibold tracking-tight text-charcoal sm:text-base">
-                Jasmin Swahili Lab
+                Jifunze Kiswahili
               </span>
             </NavLink>
           </div>

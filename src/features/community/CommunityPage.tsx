@@ -12,9 +12,9 @@ interface CommunityComment {
 }
 
 const COMMENTS_STORAGE_KEY = 'boma_community_comments_v1';
-const VISITOR_STORAGE_KEY = 'boma_visitor_count_v1';
-const VISITOR_SESSION_KEY = 'boma_visitor_counted_session';
-const BASE_VISITOR_COUNT = 1248;
+const VISITOR_STORAGE_KEY = 'boma_visitor_count_v2';
+const VISITOR_SESSION_KEY = 'boma_visitor_counted_session_v2';
+const BASE_VISITOR_COUNT = 12;
 
 const SEED_COMMENTS: CommunityComment[] = [
   {
